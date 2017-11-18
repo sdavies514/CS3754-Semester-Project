@@ -188,6 +188,8 @@ public class PasswordResetManager implements Serializable {
             return;
         }
 
+        // No need to hash these since we're not authenticating the user, just
+        // verifying that they entered the same password twice.
         if (!entered_password.equals(entered_confirm_password)) {
             message = "Password and Confirm Password must match!";
         } else {

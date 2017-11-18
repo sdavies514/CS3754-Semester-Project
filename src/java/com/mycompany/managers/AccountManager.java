@@ -553,6 +553,8 @@ public class AccountManager implements Serializable {
             return;
         }
 
+        // No need to hash these since we're not authenticating the user, just
+        // verifying that they entered the same password twice.
         if (!entered_password.equals(entered_confirm_password)) {
             statusMessage = "Password and Confirm Password must match!";
         } else {
@@ -600,6 +602,8 @@ public class AccountManager implements Serializable {
             return;
         }
 
+        // No need to hash these since we're not authenticating the user, just
+        // verifying that they entered the same password twice.
         if (!new_Password.equals(new_ConfirmPassword)) {
             statusMessage = "New Password and New Confirm Password must match!";
         } else {
@@ -666,6 +670,8 @@ public class AccountManager implements Serializable {
             return;
         }
 
+        // No need to hash these since we're not authenticating the user, just
+        // verifying that they entered the same password twice.
         if (!entered_password.equals(entered_confirm_password)) {
             statusMessage = "Password and Confirm Password must match!";
         } else {
