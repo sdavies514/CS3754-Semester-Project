@@ -6,7 +6,9 @@ package com.mycompany.managers;
 
 import com.mycompany.EntityBeans.User;
 import com.mycompany.FacadeBeans.UserFacade;
+import com.mycompany.controllers.util.PasswordUtil;
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.enterprise.context.SessionScoped;
@@ -193,7 +195,7 @@ public class PasswordResetManager implements Serializable {
         }
     }
 
-    public String resetPassword() {
+    public String resetPassword() throws NoSuchAlgorithmException {
 
         if (message == null || message.isEmpty()) {
 
@@ -202,7 +204,7 @@ public class PasswordResetManager implements Serializable {
 
             try {
                 // Reset User object's password
-                user.setPassword(password);
+                user.setHashedPassword(PasswordUtil.hashpw(password));
 
                 // Update the database
                 getUserFacade().edit(user);

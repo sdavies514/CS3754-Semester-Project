@@ -11,11 +11,13 @@ import com.mycompany.EntityBeans.UserPhoto;
 import com.mycompany.FacadeBeans.UserFacade;
 import com.mycompany.FacadeBeans.UserFileFacade;
 import com.mycompany.FacadeBeans.UserPhotoFacade;
+import com.mycompany.controllers.util.PasswordUtil;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -343,7 +345,7 @@ public class AccountManager implements Serializable {
     Create a new user account. Return "" if an error occurs; otherwise,
     upon successful account creation, redirect to show the SignIn page.
      */
-    public String createAccount() {
+    public String createAccount() throws NoSuchAlgorithmException {
 
         //-----------------------------------------------------------
         // First, check if the entered username is already being used
@@ -382,7 +384,7 @@ public class AccountManager implements Serializable {
                 newUser.setSecurityAnswer(securityAnswer);
                 newUser.setEmail(email);
                 newUser.setUsername(username);
-                newUser.setPassword(password);
+                newUser.setHashedPassword(PasswordUtil.hashpw(password));
 
                 getUserFacade().create(newUser);
 
@@ -422,7 +424,7 @@ public class AccountManager implements Serializable {
     Update the signed-in user's account profile. Return "" if an error occurs;
     otherwise, upon successful account update, redirect to show the Profile page.
      */
-    public String updateAccount() {
+    public String updateAccount() throws NoSuchAlgorithmException {
 
         if (statusMessage == null || statusMessage.isEmpty()) {
 
@@ -456,7 +458,7 @@ public class AccountManager implements Serializable {
                 if (new_Password == null || new_Password.isEmpty()) {
                     // Do nothing. The user does not want to change the password.
                 } else {
-                    editUser.setPassword(new_Password);
+                    editUser.setHashedPassword(PasswordUtil.hashpw(new_Password));
                     // Password changed successfully!
                     // Password was first validated by invoking the validatePasswordChange method below.
                 }
@@ -625,7 +627,7 @@ public class AccountManager implements Serializable {
     }
 
     // Validate if the entered password and confirm password are correct
-    public void validateUserPassword(ComponentSystemEvent event) {
+    public void validateUserPassword(ComponentSystemEvent event) throws NoSuchAlgorithmException {
         /*
         FacesContext contains all of the per-request state information related to the processing of
         a single JavaServer Faces request, and the rendering of the corresponding response.
@@ -674,7 +676,7 @@ public class AccountManager implements Serializable {
             // Obtain the object reference of the signed-in User object
             User user = getUserFacade().findByUsername(user_name);
 
-            if (entered_password.equals(user.getPassword())) {
+            if (PasswordUtil.checkpw(entered_password, user.getHashedPassword())) {
                 // entered password = signed-in user's password
                 statusMessage = "";
             } else {

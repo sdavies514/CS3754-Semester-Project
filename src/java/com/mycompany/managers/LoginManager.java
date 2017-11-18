@@ -6,7 +6,9 @@ package com.mycompany.managers;
 
 import com.mycompany.EntityBeans.User;
 import com.mycompany.FacadeBeans.UserFacade;
+import com.mycompany.controllers.util.PasswordUtil;
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -95,7 +97,7 @@ public class LoginManager implements Serializable {
     Sign in the user if the entered username and password are valid
     @return "" if an error occurs; otherwise, redirect to show the Profile page
      */
-    public String loginUser() {
+    public String loginUser() throws NoSuchAlgorithmException {
 
         // Obtain the object reference of the User object from the entered username
         User user = getUserFacade().findByUsername(getUsername());
@@ -108,7 +110,7 @@ public class LoginManager implements Serializable {
             String actualUsername = user.getUsername();
             String enteredUsername = getUsername();
 
-            String actualPassword = user.getPassword();
+            String actualHashedPassword = user.getHashedPassword();
             String enteredPassword = getPassword();
 
             if (!actualUsername.equals(enteredUsername)) {
@@ -116,7 +118,7 @@ public class LoginManager implements Serializable {
                 return "";
             }
 
-            if (!actualPassword.equals(enteredPassword)) {
+            if (!PasswordUtil.checkpw(enteredPassword, actualHashedPassword)) {
                 errorMessage = "Invalid Password!";
                 return "";
             }
