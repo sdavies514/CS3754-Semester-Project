@@ -683,37 +683,6 @@ public class AccountManager implements Serializable {
         }
     }
 
-    /*
-    UIComponent is the base class for all user interface components in JavaServer Faces.
-    The set of UIComponent instances associated with a particular request and response are organized into
-    a component tree under a UIViewRoot that represents the entire content of the request or response.
-
-    @param components: UIComponent instances associated with the current request and response
-    @return True if entered password is correct; otherwise, return False
-     */
-    private boolean correctPasswordEntered(UIComponent components) {
-
-        // Obtain the object reference of the UIInput field with id="verifyPassword" on the UI
-        UIInput uiInputVerifyPassword = (UIInput) components.findComponent("verifyPassword");
-
-        // Obtain the verify password entered in the UIInput field with id="verifyPassword" on the UI
-        String verifyPassword = uiInputVerifyPassword.getLocalValue()
-                == null ? "" : uiInputVerifyPassword.getLocalValue().toString();
-
-        if (verifyPassword.isEmpty()) {
-            statusMessage = "Please enter a password!";
-            return false;
-
-        } else if (verifyPassword.equals(password)) {
-            // Correct password is entered
-            return true;
-
-        } else {
-            statusMessage = "Invalid password entered!";
-            return false;
-        }
-    }
-
     // Show the Home page
     public String showHomePage() {
         return "index?faces-redirect=true";
