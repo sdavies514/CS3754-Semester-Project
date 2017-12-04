@@ -1,18 +1,17 @@
 package com.mycompany.chat;
  
+import com.mycompany.managers.AccountManager;
 import java.io.Serializable;
+import javax.enterprise.context.SessionScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.push.EventBus;
 import org.primefaces.push.EventBusFactory;
  
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
  
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class ChatView implements Serializable {
      
     //private final PushContext pushContext = PushContextFactory.getDefault().getPushContext();
@@ -21,17 +20,15 @@ public class ChatView implements Serializable {
  
     @ManagedProperty("#{chatUsers}")
     private ChatUsers users;
- 
+    
+    @ManagedProperty("#{accountManager}")
+    private AccountManager accountManager;
+    
     private String privateMessage;
-     
     private String globalMessage;
-     
-    private String username;
-     
-    private boolean loggedIn;
-     
     private String privateUser;
- 
+    private boolean isConnected;
+    
     public ChatUsers getUsers() {
         return users;
     }
@@ -63,59 +60,55 @@ public class ChatView implements Serializable {
     public void setPrivateMessage(String privateMessage) {
         this.privateMessage = privateMessage;
     }
-     
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-     
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
  
     public void sendGlobal() {
         System.out.println("LESSGO");
-        eventBus.publish("/CS3754-Semester-Project/primepush/*", username + ": " + globalMessage);
+        eventBus.publish("/CS3754-Semester-Project/primepush/*", getAccountManager().getSelected().getUsername() + ": " + globalMessage);
          
         globalMessage = null;
     }
      
     public void sendPrivate() {
         System.out.println("privMessage is " + privateMessage);
-        eventBus.publish("/CS3754-Semester-Project/primepush/" + privateUser, "[PM] " + username + ": " + privateMessage);
+        eventBus.publish("/CS3754-Semester-Project/primepush/" + privateUser, "[PM] " + getAccountManager().getSelected().getUsername() + ": " + privateMessage);
         privateMessage = null;
     }
      
-    public void login() {
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-        System.out.println("Username is: " + username);
-        if(users.contains(username)) {
-            loggedIn = false;
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username taken", "Try with another username."));
-            requestContext.update("growl");
-        }
-        else {
-            users.add(username);
-            requestContext.execute("PF('subscriber').connect('" + username + "')");
-            loggedIn = true;
-        }
-    }
      
     public void disconnect() {
         //remove user and update ui
-        users.remove(username);
+        users.remove(getAccountManager().getUsername());
         RequestContext.getCurrentInstance().update("form:users");
          
         //push leave information
-        eventBus.publish("/*", username + " left the channel.");
-         
-        //reset state
-        loggedIn = false;
-        username = null;
+        eventBus.publish("/*", getAccountManager().getSelected().getUsername() + " left the channel.");
+    }
+
+    /**
+     * @return the accountManager
+     */
+    public AccountManager getAccountManager() {
+        return accountManager;
+    }
+
+    /**
+     * @param accountManager the accountManager to set
+     */
+    public void setAccountManager(AccountManager accountManager) {
+        this.accountManager = accountManager;
+    }
+
+    /**
+     * @return the isConnected
+     */
+    public boolean isIsConnected() {
+        return isConnected;
+    }
+
+    /**
+     * @param isConnected the isConnected to set
+     */
+    public void setIsConnected(boolean isConnected) {
+        this.isConnected = isConnected;
     }
 }
