@@ -8,7 +8,8 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <!-- Do not enter tags before the composition line since they are ignored by JSF -->
 
@@ -41,7 +42,7 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
 
                 <p:fieldset id="container" legend="PrimeChat" toggleable="true">
 
-                    <h:panelGroup rendered="#{chatView.loggedIn}">
+                    <h:panelGroup rendered="#{accountManager.isLoggedIn()}">
                         <h:panelGrid columns="2" columnClasses="publicColumn,usersColumn" style="width:100%">
                             <p:outputPanel id="public" layout="block" styleClass="ui-corner-all ui-widget-content chatlogs" />
 
@@ -66,14 +67,6 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                         <p:commandButton value="Disconnect" actionListener="#{chatView.disconnect}" global="false" update="container" />
                     </h:panelGroup>
 
-                    <h:panelGroup rendered="#{not chatView.loggedIn}" >
-                        Username: <p:inputText value="#{chatView.username}" disabled="false" />
-
-                        <p:spacer width="5" />
-                        <p:commandButton value="Login" actionListener="#{chatView.login}" update="container"
-                                         icon="ui-icon-person" disabled="false" />
-                    </h:panelGroup>
-
                 </p:fieldset>
 
                 <p:dialog widgetVar="pChat" header="Private Chat" modal="true" showEffect="fade" hideEffect="fade">
@@ -86,7 +79,10 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                     </h:panelGrid>
                 </p:dialog>
             </h:form>
-            <p:socket onMessage="handleMessage" channel="/" autoConnect="false" widgetVar='subscriber' />
+            <c:if test="#{accountManager.isLoggedIn()}">
+                <p:socket onMessage="handleMessage" channel="/"/>
+                <p:socket onMessage="handleMessage" channel="/#{accountManager.selected.username}"/>
+            </c:if>
         </ui:define>
     </ui:composition>
     <!-- Do not enter tags after the composition line since they are ignored by JSF -->
