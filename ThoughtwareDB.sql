@@ -8,7 +8,7 @@
 Tables to be dropped must be listed in a logical order based on dependency.
 UserFile and UserPhoto depend on User. Therefore, they must be dropped before User.
 */
-DROP TABLE IF EXISTS UserFile, UserPhoto, User;
+DROP TABLE IF EXISTS UserFile, UserPhoto, User, Project, Message;
 
 /* The User table contains attributes of interest of a User. */
 CREATE TABLE User
@@ -50,3 +50,21 @@ CREATE TABLE UserFile
        user_id INT UNSIGNED,
        FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 );
+
+CREATE TABLE Project
+(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    name VARCHAR (256) NOT NULL
+);
+
+CREATE TABLE Message
+(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    message_text VARCHAR (10000) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    project_id INT UNSIGNED,
+    FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE,
+    user_id INT UNSIGNED,
+    FOREIGN KEY (user_id) REFERENCES User(id)
+);
+
