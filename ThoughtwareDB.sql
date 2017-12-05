@@ -57,6 +57,57 @@ CREATE TABLE Project
     name VARCHAR (256) NOT NULL
 );
 
+DELIMITER $$
+CREATE TRIGGER `project_after_insert` AFTER INSERT
+	ON `Project`
+	FOR EACH ROW BEGIN
+                -- In an INSERT trigger, only NEW.col_name can be used
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'INSERT_PROJECT',
+			concat('Created project ', NEW.name),
+			NEW.id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `project_after_update` AFTER UPDATE
+	ON `Project`
+	FOR EACH ROW BEGIN
+                -- In a UPDATE trigger, you can use OLD.col_name to refer to the columns of a row before it is updated and NEW.col_name to refer to the columns of the row after it is updated.
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'UPDATE_PROJECT',
+			concat('Updated project ', NEW.name),
+			NEW.id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `project_after_delete` AFTER DELETE
+	ON `Project`
+	FOR EACH ROW BEGIN
+                -- In a DELETE trigger, only OLD.col_name can be used; there is no new row.
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'DELETE_PROJECT',
+			concat('Deleted project ', OLD.name),
+			OLD.id
+		);
+    END$$
+DELIMITER ;
+
 CREATE TABLE UserProjectAssociation
 (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -66,6 +117,60 @@ CREATE TABLE UserProjectAssociation
     FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 );
 
+DELIMITER $$
+CREATE TRIGGER `user_project_association_after_insert` AFTER INSERT
+	ON `UserProjectAssociation`
+	FOR EACH ROW BEGIN
+                -- In an INSERT trigger, only NEW.col_name can be used
+                SELECT `username` FROM User WHERE id = NEW.user_id INTO @username;
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'INSERT_USER_PROJECT_ASSOCIATION',
+			concat('User ', @username, ' joined project'),
+			NEW.project_id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `user_project_association_after_update` AFTER UPDATE
+	ON `UserProjectAssociation`
+	FOR EACH ROW BEGIN
+                -- In a UPDATE trigger, you can use OLD.col_name to refer to the columns of a row before it is updated and NEW.col_name to refer to the columns of the row after it is updated.
+                SELECT `username` FROM User WHERE id = NEW.user_id INTO @username;
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'UPDATE_USER_PROJECT_ASSOCIATION',
+			concat('User ', @username, ' project membership changed'),
+			NEW.project_id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `user_project_association_after_delete` AFTER DELETE
+	ON `UserProjectAssociation`
+	FOR EACH ROW BEGIN
+                -- In a DELETE trigger, only OLD.col_name can be used; there is no new row.
+                SELECT `username` FROM User WHERE id = OLD.user_id INTO @username;
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'DELETE_USER_PROJECT_ASSOCIATION',
+			concat('User ', @username, ' left project'),
+			OLD.project_id
+		);
+    END$$
+DELIMITER ;
+
 Create Table ProjectFile
 (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -73,6 +178,57 @@ Create Table ProjectFile
     project_id INT UNSIGNED,
     FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
 );
+
+DELIMITER $$
+CREATE TRIGGER `project_file_after_insert` AFTER INSERT
+	ON `ProjectFile`
+	FOR EACH ROW BEGIN
+                -- In an INSERT trigger, only NEW.col_name can be used
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'INSERT_PROJECT_FILE',
+			concat('Created project file at ', NEW.file_location),
+			NEW.project_id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `project_file_after_update` AFTER UPDATE
+	ON `ProjectFile`
+	FOR EACH ROW BEGIN
+                -- In a UPDATE trigger, you can use OLD.col_name to refer to the columns of a row before it is updated and NEW.col_name to refer to the columns of the row after it is updated.
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'UPDATE_PROJECT_FILE',
+			concat('Updated project file at ', NEW.file_location),
+			NEW.project_id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `project_file_after_delete` AFTER DELETE
+	ON `ProjectFile`
+	FOR EACH ROW BEGIN
+                -- In a DELETE trigger, only OLD.col_name can be used; there is no new row.
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'DELETE_PROJECT_FILE',
+			concat('Deleted project file at ', OLD.file_location),
+			OLD.project_id
+		);
+    END$$
+DELIMITER ;
 
 Create Table Activity
 (
@@ -93,6 +249,63 @@ Create Table Milestone
     FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
 );
 
+DELIMITER $$
+CREATE TRIGGER `milestone_after_insert` AFTER INSERT
+	ON `Milestone`
+	FOR EACH ROW BEGIN
+                -- In an INSERT trigger, only NEW.col_name can be used
+                SELECT DATE_FORMAT(NEW.start_date, '%d %m %Y') INTO @start_date;
+                SELECT DATE_FORMAT(NEW.end_date, '%d %m %Y') INTO @end_date;
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'INSERT_MILESTONE',
+			concat('Created milestone between ', @start_date, ' and ', @end_date),
+			NEW.project_id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `milestone_after_update` AFTER UPDATE
+	ON `Milestone`
+	FOR EACH ROW BEGIN
+                -- In a UPDATE trigger, you can use OLD.col_name to refer to the columns of a row before it is updated and NEW.col_name to refer to the columns of the row after it is updated.
+                SELECT DATE_FORMAT(NEW.start_date, '%d %m %Y') INTO @start_date;
+                SELECT DATE_FORMAT(NEW.end_date, '%d %m %Y') INTO @end_date;
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'UPDATE_MILESTONE',
+			concat('Updated milestone between ', @start_date, ' and ', @end_date),
+			NEW.project_id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `milestone_after_delete` AFTER DELETE
+	ON `Milestone`
+	FOR EACH ROW BEGIN
+                -- In a DELETE trigger, only OLD.col_name can be used; there is no new row.
+                SELECT DATE_FORMAT(OLD.start_date, '%d %m %Y') INTO @start_date;
+                SELECT DATE_FORMAT(OLD.end_date, '%d %m %Y') INTO @end_date;
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'DELETE_MILESTONE',
+			concat('Deleted milestone between ', @start_date, ' and ', @end_date),
+			OLD.project_id
+		);
+    END$$
+DELIMITER ;
+
 CREATE TABLE Message
 (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -104,4 +317,54 @@ CREATE TABLE Message
     FOREIGN KEY (user_id) REFERENCES User(id)
 );
 
+DELIMITER $$
+CREATE TRIGGER `message_after_insert` AFTER INSERT
+	ON `Message`
+	FOR EACH ROW BEGIN
+                -- In an INSERT trigger, only NEW.col_name can be used
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'INSERT_MESSAGE',
+			NEW.message_text,
+			NEW.project_id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `message_after_update` AFTER UPDATE
+	ON `Message`
+	FOR EACH ROW BEGIN
+                -- In a UPDATE trigger, you can use OLD.col_name to refer to the columns of a row before it is updated and NEW.col_name to refer to the columns of the row after it is updated.
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'UPDATE_MESSAGE',
+			NEW.message_text,
+			NEW.project_id
+		);
+    END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `message_after_delete` AFTER DELETE
+	ON `Message`
+	FOR EACH ROW BEGIN
+                -- In a DELETE trigger, only OLD.col_name can be used; there is no new row.
+		INSERT INTO `Activity` (
+			type,
+			message,
+			project_id
+		) VALUES (
+			'DELETE_MESSAGE',
+			OLD.message_text,
+			OLD.project_id
+		);
+    END$$
+DELIMITER ;
 
