@@ -199,6 +199,10 @@ public class ProjectController implements Serializable {
             JsfUtil.addErrorMessage("Not logged in");
             return false;
         }
+        if(userProjFacade.associationAlreadyExists(currentUser, selected)){
+            JsfUtil.addErrorMessage("You already joined the group");
+            return false;
+        }
         boolean success = false;
         try {
             success = PasswordUtil.checkpw(joinedPassword, selected.getHashedPassword());

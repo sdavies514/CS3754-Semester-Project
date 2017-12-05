@@ -4,6 +4,8 @@
  */
 package com.mycompany.FacadeBeans;
 
+import com.mycompany.EntityBeans.Project;
+import com.mycompany.EntityBeans.User;
 import com.mycompany.EntityBeans.UserProjectAssociation;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -26,6 +28,13 @@ public class UserProjectAssociationFacade extends AbstractFacade<UserProjectAsso
 
     public UserProjectAssociationFacade() {
         super(UserProjectAssociation.class);
+    }
+    
+    public boolean associationAlreadyExists(User u, Project p){
+        return !(em.createQuery("SELECT c FROM UserProjectAssociation c WHERE c.userId = :user AND c.projectId = :project")
+                .setParameter("user", u)
+                .setParameter("project", p)
+                .getResultList().isEmpty());
     }
     
 }
