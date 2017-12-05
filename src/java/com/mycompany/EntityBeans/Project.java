@@ -35,6 +35,15 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Project.findByName", query = "SELECT p FROM Project p WHERE p.name = :name")})
 public class Project implements Serializable {
 
+    @OneToMany(mappedBy = "projectId")
+    private Collection<Milestone> milestoneCollection;
+    @OneToMany(mappedBy = "projectId")
+    private Collection<Activity> activityCollection;
+    @OneToMany(mappedBy = "projectId")
+    private Collection<ProjectFile> projectFileCollection;
+    @OneToMany(mappedBy = "projectId")
+    private Collection<UserProjectAssociation> userProjectAssociationCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -123,6 +132,42 @@ public class Project implements Serializable {
     @Override
     public String toString() {
         return "com.mycompany.EntityBeans.Project[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Milestone> getMilestoneCollection() {
+        return milestoneCollection;
+    }
+
+    public void setMilestoneCollection(Collection<Milestone> milestoneCollection) {
+        this.milestoneCollection = milestoneCollection;
+    }
+
+    @XmlTransient
+    public Collection<Activity> getActivityCollection() {
+        return activityCollection;
+    }
+
+    public void setActivityCollection(Collection<Activity> activityCollection) {
+        this.activityCollection = activityCollection;
+    }
+
+    @XmlTransient
+    public Collection<ProjectFile> getProjectFileCollection() {
+        return projectFileCollection;
+    }
+
+    public void setProjectFileCollection(Collection<ProjectFile> projectFileCollection) {
+        this.projectFileCollection = projectFileCollection;
+    }
+
+    @XmlTransient
+    public Collection<UserProjectAssociation> getUserProjectAssociationCollection() {
+        return userProjectAssociationCollection;
+    }
+
+    public void setUserProjectAssociationCollection(Collection<UserProjectAssociation> userProjectAssociationCollection) {
+        this.userProjectAssociationCollection = userProjectAssociationCollection;
     }
     
 }

@@ -8,7 +8,7 @@
 Tables to be dropped must be listed in a logical order based on dependency.
 UserFile and UserPhoto depend on User. Therefore, they must be dropped before User.
 */
-DROP TABLE IF EXISTS UserFile, UserPhoto, Message, Project, User;
+DROP TABLE IF EXISTS UserFile, UserPhoto, Message, Activity, Milestone, ProjectFile, UserProjectAssociation, Project, User;
 
 /* The User table contains attributes of interest of a User. */
 CREATE TABLE User
@@ -57,6 +57,42 @@ CREATE TABLE Project
     name VARCHAR (256) NOT NULL
 );
 
+CREATE TABLE UserProjectAssociation
+(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    project_id INT UNSIGNED,
+    FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE,
+    user_id INT UNSIGNED,
+    FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+);
+
+Create Table ProjectFile
+(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    file_location VARCHAR (256) NOT NULL,
+    project_id INT UNSIGNED,
+    FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
+);
+
+Create Table Activity
+(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    type VARCHAR (256) NOT NULL,
+    message VARCHAR (256) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    project_id INT UNSIGNED,
+    FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
+);
+
+Create Table Milestone
+(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    start_date DATETIME NOT NULL,
+    end_date DATETIME,
+    project_id INT UNSIGNED,
+    FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
+);
+
 CREATE TABLE Message
 (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -67,4 +103,5 @@ CREATE TABLE Message
     user_id INT UNSIGNED,
     FOREIGN KEY (user_id) REFERENCES User(id)
 );
+
 

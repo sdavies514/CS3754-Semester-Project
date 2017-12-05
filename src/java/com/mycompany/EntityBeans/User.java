@@ -50,6 +50,9 @@ import javax.xml.bind.annotation.XmlTransient;
 public class User implements Serializable {
 
     @OneToMany(mappedBy = "userId")
+    private Collection<UserProjectAssociation> userProjectAssociationCollection;
+
+    @OneToMany(mappedBy = "userId")
     private Collection<Message> messageCollection;
 
     // User was a reserved keyword in SQL in 1999, but not any more.
@@ -364,6 +367,15 @@ public class User implements Serializable {
 
     public void setMessageCollection(Collection<Message> messageCollection) {
         this.messageCollection = messageCollection;
+    }
+
+    @XmlTransient
+    public Collection<UserProjectAssociation> getUserProjectAssociationCollection() {
+        return userProjectAssociationCollection;
+    }
+
+    public void setUserProjectAssociationCollection(Collection<UserProjectAssociation> userProjectAssociationCollection) {
+        this.userProjectAssociationCollection = userProjectAssociationCollection;
     }
 
 }
