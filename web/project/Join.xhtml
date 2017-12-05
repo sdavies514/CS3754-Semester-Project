@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+        <p:dialog id="ProjectJoinDlg" widgetVar="ProjectJoinDialog" modal="true" resizable="false" appendTo="@(body)" header="Join Project">
+            <h:form id="ProjectJoinForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{projectController.selected != null}">
+                        <p:outputLabel value="Enter Password: " for="hashedPassword" />
+                        <p:inputText id="hashedPassword" value="#{projectController.joinedPassword}" title="#{bundle.JoinProjectTitle_hashedPassword}" required="true" requiredMessage="#{bundle.JoinProjectRequiredMessage_hashedPassword}"/>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{projectController.joinProject(accountManager.selected)}" value="Join" update="display,:ProjectListForm:datalist,:growl" oncomplete="PF('ProjectJoinDialog').hide()"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF('ProjectJoinDialog').hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

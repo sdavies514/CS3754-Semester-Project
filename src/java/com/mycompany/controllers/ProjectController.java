@@ -1,11 +1,16 @@
 package com.mycompany.controllers;
 
 import com.mycompany.EntityBeans.Project;
+import com.mycompany.EntityBeans.User;
+import com.mycompany.EntityBeans.UserProjectAssociation;
 import com.mycompany.controllers.util.JsfUtil;
 import com.mycompany.controllers.util.JsfUtil.PersistAction;
 import com.mycompany.FacadeBeans.ProjectFacade;
+import com.mycompany.controllers.util.PasswordUtil;
+import com.mycompany.managers.AccountManager;
 
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -14,6 +19,7 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -25,8 +31,11 @@ public class ProjectController implements Serializable {
 
     @EJB
     private com.mycompany.FacadeBeans.ProjectFacade ejbFacade;
+    @EJB
+    private com.mycompany.FacadeBeans.UserProjectAssociationFacade userProjFacade;
     private List<Project> items = null;
     private Project selected;
+    private String joinedPassword;
 
     public ProjectController() {
     }
@@ -37,6 +46,20 @@ public class ProjectController implements Serializable {
 
     public void setSelected(Project selected) {
         this.selected = selected;
+    }
+
+    /**
+     * @return the joinedPassword
+     */
+    public String getJoinedPassword() {
+        return joinedPassword;
+    }
+
+    /**
+     * @param joinedPassword the joinedPassword to set
+     */
+    public void setJoinedPassword(String joinedPassword) {
+        this.joinedPassword = joinedPassword;
     }
 
     protected void setEmbeddableKeys() {
@@ -56,6 +79,11 @@ public class ProjectController implements Serializable {
     }
 
     public void create() {
+        try {
+            selected.setHashedPassword(PasswordUtil.hashpw(selected.getHashedPassword()));
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("ProjectCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
@@ -162,4 +190,31 @@ public class ProjectController implements Serializable {
 
     }
 
+    public boolean joinProject(User currentUser) {
+        if (joinedPassword == null) {
+            JsfUtil.addErrorMessage("Password was blank");
+            return false;
+        }
+        if (currentUser == null) {
+            JsfUtil.addErrorMessage("Not logged in");
+            return false;
+        }
+        boolean success = false;
+        try {
+            success = PasswordUtil.checkpw(joinedPassword, selected.getHashedPassword());
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (success) {
+            Project currentProj = selected;
+            UserProjectAssociation create = new UserProjectAssociation();
+            create.setProjectId(currentProj);
+            create.setUserId(currentUser);
+            userProjFacade.create(create);
+            JsfUtil.addSuccessMessage("Sucessfully joined project");
+        } else {
+            JsfUtil.addErrorMessage("Incorrect Password");
+        }
+        return success;
+    }
 }

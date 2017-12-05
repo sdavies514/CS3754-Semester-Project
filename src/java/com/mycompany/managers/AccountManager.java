@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -51,7 +52,7 @@ However, we spell it out to make our code more readable and understandable.
 ---------------------------------------------------------------------------
  */
 @Named(value = "accountManager")
-
+@ManagedBean(eager=true)
 /*
 The @SessionScoped annotation preserves the values of the AccountManager
 object's instance variables across multiple HTTP request-response cycles
