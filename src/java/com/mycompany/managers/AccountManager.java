@@ -58,7 +58,6 @@ The @SessionScoped annotation preserves the values of the AccountManager
 object's instance variables across multiple HTTP request-response cycles
 as long as the user's established HTTP session is alive.
  */
-@ManagedBean
 @SessionScoped
 
 /**
