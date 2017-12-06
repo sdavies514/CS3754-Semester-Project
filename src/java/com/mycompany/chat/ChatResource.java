@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
-@PushEndpoint("/CS3754-Semester-Project/primepush/{user}")
+@PushEndpoint("/{user}")
 @Singleton
 public class ChatResource {
 

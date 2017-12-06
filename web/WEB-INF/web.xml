@@ -78,5 +78,9 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
         <servlet-class>org.primefaces.push.PushServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
+    
+    <servlet-mapping>
+        <servlet-name>Push Servlet</servlet-name>
+        <url-pattern>/primepush/*</url-pattern>
+    </servlet-mapping>
 </web-app>

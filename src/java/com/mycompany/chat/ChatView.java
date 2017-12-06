@@ -63,14 +63,14 @@ public class ChatView implements Serializable {
  
     public void sendGlobal() {
         System.out.println("LESSGO");
-        eventBus.publish("/CS3754-Semester-Project/primepush/*", getAccountManager().getSelected().getUsername() + ": " + globalMessage);
+        eventBus.publish("/*", getAccountManager().getSelected().getUsername() + ": " + globalMessage);
          
         globalMessage = null;
     }
      
     public void sendPrivate() {
         System.out.println("privMessage is " + privateMessage);
-        eventBus.publish("/CS3754-Semester-Project/primepush/" + privateUser, "[PM] " + getAccountManager().getSelected().getUsername() + ": " + privateMessage);
+        eventBus.publish("/" + privateUser, "[PM] " + getAccountManager().getSelected().getUsername() + ": " + privateMessage);
         privateMessage = null;
     }
      
