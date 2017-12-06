@@ -9,14 +9,14 @@
     <ui:composition template="/template/siteTemplate.xhtml">
 
         <ui:define name="title">
-            <h:outputText value="#{bundle.ListProjectTitle}"></h:outputText>
+            <h:outputText value="Project List"></h:outputText>
         </ui:define>
 
         <!-- Create the content for this page below -->
         <ui:define name="editableContent">
             <p:growl id="growl" life="4000" />
             <h:form id="ProjectListForm">
-                <p:panel header="#{bundle.ListProjectTitle}">
+                <p:panel header="Project List">
                     <p:dataTable id="datalist" value="#{projectController.items}" var="item"
                                  selectionMode="single" selection="#{projectController.selected}"
                                  paginator="true"
