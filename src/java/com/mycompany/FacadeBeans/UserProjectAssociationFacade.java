@@ -7,6 +7,7 @@ package com.mycompany.FacadeBeans;
 import com.mycompany.EntityBeans.Project;
 import com.mycompany.EntityBeans.User;
 import com.mycompany.EntityBeans.UserProjectAssociation;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,12 +30,24 @@ public class UserProjectAssociationFacade extends AbstractFacade<UserProjectAsso
     public UserProjectAssociationFacade() {
         super(UserProjectAssociation.class);
     }
-    
-    public boolean associationAlreadyExists(User u, Project p){
+
+    public boolean associationAlreadyExists(User u, Project p) {
         return !(em.createQuery("SELECT c FROM UserProjectAssociation c WHERE c.userId = :user AND c.projectId = :project")
                 .setParameter("user", u)
                 .setParameter("project", p)
                 .getResultList().isEmpty());
     }
-    
+
+    public List<User> getUsersForProject(Project p) {
+        return (List<User>) em.createQuery("SELECT c.userId FROM UserProjectAssociation c WHERE c.projectId = :project")
+                .setParameter("project", p)
+                .getResultList();
+    }
+
+    public List<Project> getProjectsForUser(User u) {
+        return (List<Project>) em.createQuery("SELECT c.projectId FROM UserProjectAssociation c WHERE c.userId = :user")
+                .setParameter("user", u)
+                .getResultList();
+    }
+
 }
