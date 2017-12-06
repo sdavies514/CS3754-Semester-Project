@@ -197,28 +197,31 @@ public class ProjectController implements Serializable {
         }
         if (currentUser == null) {
             JsfUtil.addErrorMessage("Not logged in");
+            joinedPassword = null;
             return false;
         }
-        if(userProjFacade.associationAlreadyExists(currentUser, selected)){
+        if (userProjFacade.associationAlreadyExists(currentUser, selected)) {
             JsfUtil.addErrorMessage("You already joined the group");
+            joinedPassword = null;
             return false;
         }
-        boolean success = false;
         try {
-            success = PasswordUtil.checkpw(joinedPassword, selected.getHashedPassword());
+            if (PasswordUtil.checkpw(joinedPassword, selected.getHashedPassword())) {
+                Project currentProj = selected;
+                UserProjectAssociation create = new UserProjectAssociation();
+                create.setProjectId(currentProj);
+                create.setUserId(currentUser);
+                userProjFacade.create(create);
+                JsfUtil.addSuccessMessage("Sucessfully joined project");
+                joinedPassword = null;
+                return true;
+            } else {
+                JsfUtil.addErrorMessage("Incorrect Password");
+            }
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (success) {
-            Project currentProj = selected;
-            UserProjectAssociation create = new UserProjectAssociation();
-            create.setProjectId(currentProj);
-            create.setUserId(currentUser);
-            userProjFacade.create(create);
-            JsfUtil.addSuccessMessage("Sucessfully joined project");
-        } else {
-            JsfUtil.addErrorMessage("Incorrect Password");
-        }
-        return success;
+        joinedPassword = null;
+        return false;
     }
 }
