@@ -8,7 +8,8 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
 
     <!--
     *********************************************
@@ -59,10 +60,20 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                             <h:link outcome="/Profile" styleClass="arialTen">
                                 <i class="fa fa-user">&nbsp;</i>My Account
                             </h:link>&nbsp;&nbsp;
-
-                            <h:link outcome="/UserFiles" styleClass="arialTen">
-                                <i class="fa fa-files-o">&nbsp;</i>My Files
-                            </h:link>&nbsp;&nbsp;
+                            
+                            <p:tieredMenu style="width:200px">
+                                <p:submenu label="My Projects" icon="ui-icon-bookmark">
+                                    <c:forEach items="#{AccountManager.getUserProjects()}" var="proj">
+                                        <p:submenu label="#{proj.name}" icon="ui-icon-triangle-1-e">
+                                            <p:menuitem value="Project Home" outcome="/index" />
+                                            <p:menuitem value="Chat" outcome="/index" />
+                                            <p:menuitem value="Timeline" outcome="/index" />
+                                            <p:menuitem value="Files" outcome="/index" />
+                                            <p:menuitem value="Calendar" outcome="/index" />
+                                        </p:submenu>
+                                    </c:forEach>
+                                </p:submenu>
+                            </p:tieredMenu>
                         </c:if>
 
                         <c:if test="#{accountManager.isLoggedIn() == false}">

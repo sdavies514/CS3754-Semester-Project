@@ -7,10 +7,12 @@ package com.mycompany.managers;
 import com.mycompany.EntityBeans.User;
 import com.mycompany.EntityBeans.UserFile;
 import com.mycompany.EntityBeans.UserPhoto;
+import com.mycompany.EntityBeans.Project;
 
 import com.mycompany.FacadeBeans.UserFacade;
 import com.mycompany.FacadeBeans.UserFileFacade;
 import com.mycompany.FacadeBeans.UserPhotoFacade;
+import com.mycompany.FacadeBeans.UserProjectAssociationFacade;
 import com.mycompany.controllers.util.PasswordUtil;
 
 import java.io.IOException;
@@ -133,6 +135,15 @@ public class AccountManager implements Serializable {
      */
     @EJB
     private UserPhotoFacade userPhotoFacade;
+    
+    /*
+    The instance variable 'userProjectAssociationFacade' is annotated with the @EJB annotation.
+    The @EJB annotation directs the EJB Container (of the GlassFish AS) to inject (store) the object reference
+    of the UserProjectAssociationFacade object, after it is instantiated at runtime,
+    into the instance variable 'userProjectAssociationFacade'.
+     */
+    @EJB
+    private UserProjectAssociationFacade userProjectAssociationFacade;
 
     // Constructor method instantiating an instance of AccountManager
     public AccountManager() {
@@ -270,7 +281,11 @@ public class AccountManager implements Serializable {
     public UserPhotoFacade getUserPhotoFacade() {
         return userPhotoFacade;
     }
-
+    
+    public UserProjectAssociationFacade getUserProjectAssociationFacade() {
+        return userProjectAssociationFacade;
+    }
+    
     /*
     private Map<String, Object> security_questions;
         String      int
@@ -419,6 +434,10 @@ public class AccountManager implements Serializable {
         // Put the User's database primary key into session map variable user_id
         FacesContext.getCurrentInstance().getExternalContext().
                 getSessionMap().put("user_id", user.getId());
+    }
+    
+    public List<Project> getUserProjects() {
+        return getUserProjectAssociationFacade().getProjectsForUser(getSelected());
     }
 
     /*
