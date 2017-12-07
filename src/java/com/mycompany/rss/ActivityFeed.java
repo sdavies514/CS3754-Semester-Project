@@ -4,6 +4,9 @@
  */
 package com.mycompany.rss;
 
+import com.mycompany.EntityBeans.Activity;
+import com.mycompany.EntityBeans.Project;
+import com.mycompany.controllers.util.PasswordUtil;
 import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndContentImpl;
 import com.rometools.rome.feed.synd.SyndEntry;
@@ -14,8 +17,11 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedOutput;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -23,6 +29,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -32,6 +39,11 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("/rss")
 public class ActivityFeed {
+
+    @EJB
+    private com.mycompany.FacadeBeans.ProjectFacade projectFacade;
+    @EJB
+    private com.mycompany.FacadeBeans.ActivityFacade activityFacade;
 
     @Context
     private UriInfo context;
@@ -49,13 +61,39 @@ public class ActivityFeed {
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public String getXml() throws FeedException {
+    public String getXml(@QueryParam("project_name") String projectName,
+            @QueryParam("project_password") String projectPassword)
+            throws FeedException, NoSuchAlgorithmException {
+//        Project entity = new Project();
+//        entity.setName("testproject");
+//        entity.setHashedPassword(PasswordUtil.hashpw("testpassword"));
+//        projectFacade.create(entity);
+
+        List entries = new ArrayList();
+        Project project = projectFacade.findByName(projectName);
+        if (project != null) {
+            if (PasswordUtil.checkpw(projectPassword, project.getHashedPassword())) {
+                for (Activity activity : activityFacade.findByProject(project)){
+                    SyndContent description = new SyndContentImpl();
+                    description.setType("text/plain");
+                    description.setValue(activity.getMessage());
+
+                    SyndEntry entry = new SyndEntryImpl();
+                    entry.setTitle(activity.getType());
+                    entry.setLink("http://wiki.java.net/bin/view/Javawsxml/rome01");
+                    entry.setPublishedDate(activity.getTimestamp());
+                    entry.setDescription(description);
+                    entries.add(entry);
+                }
+            }
+        }
+
         SyndFeed feed = new SyndFeedImpl();
         feed.setFeedType("rss_2.0");
         feed.setTitle("test-title");
         feed.setDescription("test-description");
         feed.setLink("https://example.org");
-        System.out.println();
+        feed.setEntries(entries);
         return new SyndFeedOutput().outputString(feed);
     }
 

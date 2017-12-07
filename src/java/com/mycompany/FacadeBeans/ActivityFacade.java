@@ -5,6 +5,9 @@
 package com.mycompany.FacadeBeans;
 
 import com.mycompany.EntityBeans.Activity;
+import com.mycompany.EntityBeans.Project;
+import com.mycompany.EntityBeans.User;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,5 +30,10 @@ public class ActivityFacade extends AbstractFacade<Activity> {
     public ActivityFacade() {
         super(Activity.class);
     }
-    
+
+    public List<Activity> findByProject(Project project) {
+        return em.createQuery("SELECT a FROM Activity a WHERE a.projectId = :project")
+                .setParameter("project", project)
+                .getResultList();
+    }
 }

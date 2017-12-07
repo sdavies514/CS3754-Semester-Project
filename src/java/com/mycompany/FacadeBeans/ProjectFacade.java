@@ -5,6 +5,7 @@
 package com.mycompany.FacadeBeans;
 
 import com.mycompany.EntityBeans.Project;
+import com.mycompany.EntityBeans.User;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,5 +28,16 @@ public class ProjectFacade extends AbstractFacade<Project> {
     public ProjectFacade() {
         super(Project.class);
     }
-    
+
+    public Project findByName(String name) {
+        if (em.createNamedQuery("Project.findByName")
+                .setParameter("name", name)
+                .getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (Project) em.createNamedQuery("Project.findByName")
+                    .setParameter("name", name)
+                    .getSingleResult();
+        }
+    }
 }
