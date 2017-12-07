@@ -51,6 +51,10 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                             <i class="fa fa-home">&nbsp;</i>Home
                         </h:link>&nbsp;&nbsp;
 
+                        <a href="webresources/rss" class="arialTen">
+                            <i class="fa fa-rss">&nbsp;</i>Rss Feed
+                        </a>&nbsp;&nbsp;
+
                         <c:if test="#{accountManager.isLoggedIn() == true}">
                             <h:commandLink action="#{accountManager.logout()}" styleClass="arialTen" >
                                 <i class="fa fa-sign-out">&nbsp;</i>Sign Out
