@@ -6,8 +6,9 @@ import com.mycompany.EntityBeans.UserProjectAssociation;
 import com.mycompany.controllers.util.JsfUtil;
 import com.mycompany.controllers.util.JsfUtil.PersistAction;
 import com.mycompany.FacadeBeans.ProjectFacade;
+import com.mycompany.FacadeBeans.UserFacade;
+import com.mycompany.FacadeBeans.UserProjectAssociationFacade;
 import com.mycompany.controllers.util.PasswordUtil;
-import com.mycompany.managers.AccountManager;
 
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
@@ -19,7 +20,6 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -29,11 +29,18 @@ import javax.faces.convert.FacesConverter;
 @SessionScoped
 public class ProjectController implements Serializable {
 
+    /* The instance variable 'userFacade' is annotated with the @EJB annotation.
+    The @EJB annotation directs the EJB Container (of the GlassFish AS) to inject (store) the object reference
+    of the UserFacade object, after it is instantiated at runtime, into the instance variable 'userFacade'.
+     */
     @EJB
-    private com.mycompany.FacadeBeans.ProjectFacade ejbFacade;
+    private ProjectFacade ejbFacade;
     @EJB
-    private com.mycompany.FacadeBeans.UserProjectAssociationFacade userProjFacade;
+    private UserProjectAssociationFacade userProjFacade;
+    @EJB
+    private UserFacade userFacade;
     private List<Project> items = null;
+    private List<Project> userItems = null;
     private Project selected;
     private String joinedPassword;
 
@@ -71,6 +78,14 @@ public class ProjectController implements Serializable {
     private ProjectFacade getFacade() {
         return ejbFacade;
     }
+    
+    private UserFacade getUserFacade() {
+        return userFacade;
+    }
+    
+    private UserProjectAssociationFacade getUserProjFacade() {
+        return userProjFacade;
+    }
 
     public Project prepareCreate() {
         selected = new Project();
@@ -107,6 +122,21 @@ public class ProjectController implements Serializable {
             items = getFacade().findAll();
         }
         return items;
+    }
+    
+    public List<Project> getUserItems() {
+        if (userItems == null) {
+            // Obtain the signed-in user's username
+            String usernameOfSignedInUser = (String) FacesContext.getCurrentInstance()
+                    .getExternalContext().getSessionMap().get("username");
+
+            // Obtain the object reference of the signed-in user
+            User signedInUser = getUserFacade().findByUsername(usernameOfSignedInUser);
+
+            // Obtain only those projects from the database that belong to the signed-in user
+            userItems = getUserProjFacade().getProjectsForUser(signedInUser);
+        }
+        return userItems;
     }
 
     private void persist(PersistAction persistAction, String successMessage) {
@@ -197,28 +227,31 @@ public class ProjectController implements Serializable {
         }
         if (currentUser == null) {
             JsfUtil.addErrorMessage("Not logged in");
+            joinedPassword = null;
             return false;
         }
-        if(userProjFacade.associationAlreadyExists(currentUser, selected)){
+        if (userProjFacade.associationAlreadyExists(currentUser, selected)) {
             JsfUtil.addErrorMessage("You already joined the group");
+            joinedPassword = null;
             return false;
         }
-        boolean success = false;
         try {
-            success = PasswordUtil.checkpw(joinedPassword, selected.getHashedPassword());
+            if (PasswordUtil.checkpw(joinedPassword, selected.getHashedPassword())) {
+                Project currentProj = selected;
+                UserProjectAssociation create = new UserProjectAssociation();
+                create.setProjectId(currentProj);
+                create.setUserId(currentUser);
+                userProjFacade.create(create);
+                JsfUtil.addSuccessMessage("Sucessfully joined project");
+                joinedPassword = null;
+                return true;
+            } else {
+                JsfUtil.addErrorMessage("Incorrect Password");
+            }
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (success) {
-            Project currentProj = selected;
-            UserProjectAssociation create = new UserProjectAssociation();
-            create.setProjectId(currentProj);
-            create.setUserId(currentUser);
-            userProjFacade.create(create);
-            JsfUtil.addSuccessMessage("Sucessfully joined project");
-        } else {
-            JsfUtil.addErrorMessage("Incorrect Password");
-        }
-        return success;
+        joinedPassword = null;
+        return false;
     }
 }
