@@ -85,12 +85,12 @@ public class ProjectController implements Serializable {
         return selected;
     }
 
-    public void create() {
-        try {
-            selected.setHashedPassword(PasswordUtil.hashpw(selected.getHashedPassword()));
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void create() throws NoSuchAlgorithmException {
+        // when creating a new project, the client stores the unhashed
+        // password in this field, so we must hash it and persist the hash
+        // instead.
+        selected.setHashedPassword(PasswordUtil.hashpw(selected.getHashedPassword()));
+
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("ProjectCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
