@@ -1,6 +1,6 @@
 /*
- * Created by Casey Butenhoff on 2017.11.18  *
- * Copyright © 2017 Casey Butenhoff. All rights reserved. *
+ * Created by Shane Davies on 2017.11.18  *
+ * Copyright © 2017 Shane Davies. All rights reserved. *
  */
 package com.mycompany.managers;
 
@@ -13,12 +13,13 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.inject.Inject;
 
 @Named(value = "loginManager")
 @SessionScoped
 /**
  *
- * @author Butenhoff
+ * @author Davies
  */
 public class LoginManager implements Serializable {
 
@@ -30,6 +31,11 @@ public class LoginManager implements Serializable {
     private String username;
     private String password;
     private String errorMessage;
+    private String googleUsername;
+    private String googleFirstName;
+    private String googleLastName;
+    private String googleImageUrl;
+    private String googleId;
 
     /*
     The instance variable 'userFacade' is annotated with the @EJB annotation.
@@ -38,9 +44,13 @@ public class LoginManager implements Serializable {
      */
     @EJB
     private UserFacade userFacade;
+    
+    @Inject
+    private AccountManager accountManager;
 
     // Constructor method instantiating an instance of LoginManager
     public LoginManager() {
+        //accountManager = new AccountManager();
     }
 
     /*
@@ -55,7 +65,48 @@ public class LoginManager implements Serializable {
     public void setUsername(String username) {
         this.username = username;
     }
+    
+    public String getGoogleUsername() {
+        return googleUsername;
+    }
 
+    public void setGoogleUsername(String username) {
+        this.googleUsername = username;
+        System.out.println(username);
+    }
+
+    public String getGoogleFirstName() {
+        return googleFirstName;
+    }
+
+    public void setGoogleFirstName(String googleFirstName) {
+        this.googleFirstName = googleFirstName;
+    }
+
+    public String getGoogleLastName() {
+        return googleLastName;
+    }
+
+    public void setGoogleLastName(String googleLastName) {
+        this.googleLastName = googleLastName;
+    }
+
+    public String getGoogleImageUrl() {
+        return googleImageUrl;
+    }
+
+    public void setGoogleImageUrl(String googleImageUrl) {
+        this.googleImageUrl = googleImageUrl;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+    
     public String getPassword() {
         return password;
     }
@@ -74,6 +125,10 @@ public class LoginManager implements Serializable {
 
     public UserFacade getUserFacade() {
         return userFacade;
+    }
+
+    public AccountManager getAccountManager() {
+        return accountManager;
     }
 
     /*
@@ -127,10 +182,51 @@ public class LoginManager implements Serializable {
 
             // Initialize the session map with user properties of interest
             initializeSessionMap(user);
+            FacesContext.getCurrentInstance().getExternalContext().
+                getSessionMap().put("isGoogleAccount", false);
 
             // Redirect to show the Profile page
             return "Profile.xhtml?faces-redirect=true";
         }
+    }
+    
+    public String signedInWithGoogle() throws NoSuchAlgorithmException {
+        System.out.println(googleUsername);
+        
+        // Obtain the object reference of the User object from the entered username
+        User user = getUserFacade().findByUsername(getGoogleUsername());
+
+        if (user == null) {
+            System.out.println("Login: " + googleUsername);
+            accountManager.setFirstName(googleFirstName);
+            accountManager.setLastName(googleLastName);
+            accountManager.setUsername(googleUsername);
+            accountManager.setEmail(googleUsername);
+            accountManager.setAddress1("Google account, please update!");
+            accountManager.setCity("Google account, please update!");
+            accountManager.setState("AK");
+            accountManager.setZipcode("00000");
+            accountManager.setSecurityQuestion(0);
+            accountManager.setSecurityAnswer("Google account, please update!");
+            accountManager.setPassword("Google account, please update!");
+            
+            accountManager.createAccount();
+
+        } else {
+            errorMessage = "";
+
+            // Initialize the session map with user properties of interest
+            initializeSessionMap(user);
+            
+            FacesContext.getCurrentInstance().getExternalContext().
+                getSessionMap().put("isGoogleAccount", true);
+            // Redirect to show the Profile page
+            return "Profile.xhtml?faces-redirect=true";
+        }
+        
+
+        // Redirect to show the Profile page
+        return "Profile.xhtml?faces-redirect=true";
     }
 
     /*
@@ -144,9 +240,8 @@ public class LoginManager implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().
                 getSessionMap().put("last_name", user.getLastName());
         FacesContext.getCurrentInstance().getExternalContext().
-                getSessionMap().put("username", username);
+                getSessionMap().put("username", user.getUsername());
         FacesContext.getCurrentInstance().getExternalContext().
                 getSessionMap().put("user_id", user.getId());
     }
-
 }

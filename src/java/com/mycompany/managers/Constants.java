@@ -22,9 +22,9 @@ public final class Constants {
         Therefore, we use the following two external directories
         for the storage and retrieval of user's files.
      */
-    public static final String FILES_ABSOLUTE_PATH = "C:\\Users\\CJ\\ThoughtwareStorage\\FileStorage\\";
+    public static final String FILES_ABSOLUTE_PATH = "/Users/ilikepie529/ThoughtwareStorage/FileStorage/";
 //    public static final String FILES_ABSOLUTE_PATH = "/home/cloudsd/Butenhoff/ThoughtwareStorage/FileStorage/";
-    public static final String PHOTOS_ABSOLUTE_PATH = "C:\\Users\\CJ\\ThoughtwareStorage\\PhotoStorage\\";
+    public static final String PHOTOS_ABSOLUTE_PATH = "/Users/ilikepie529/ThoughtwareStorage/PhotoStorage/";
 //    public static final String PHOTOS_ABSOLUTE_PATH = "/home/cloudsd/Butenhoff/ThoughtwareStorage/PhotoStorage/";
 
     /*

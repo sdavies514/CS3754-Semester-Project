@@ -98,6 +98,7 @@ public class AccountManager implements Serializable {
     private String city;
     private String state;
     private String zipcode;
+    private String googleImageUrl;
 
     private int securityQuestion;
     private String securityAnswer;
@@ -235,6 +236,14 @@ public class AccountManager implements Serializable {
         this.zipcode = zip_code;
     }
 
+    public String getGoogleImageUrl() {
+        return googleImageUrl;
+    }
+
+    public void setGoogleImageUrl(String googleImageUrl) {
+        this.googleImageUrl = googleImageUrl;
+    }
+
     public int getSecurityQuestion() {
         return securityQuestion;
     }
@@ -341,6 +350,11 @@ public class AccountManager implements Serializable {
     public boolean isLoggedIn() {
         return FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username") != null;
     }
+    
+    // Returns if the currently logged in account did so by using Google OAuth
+    public boolean isGoogleAccount() {
+        return FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isGoogleAccount").equals(true);
+    }
 
     /*
     Create a new user account. Return "" if an error occurs; otherwise,
@@ -352,6 +366,7 @@ public class AccountManager implements Serializable {
         // First, check if the entered username is already being used
         //-----------------------------------------------------------
         // Obtain the object reference of a User object with username
+        System.out.println("Account: " + getUserFacade());
         User aUser = getUserFacade().findByUsername(username);
 
         if (aUser != null) {
@@ -394,6 +409,15 @@ public class AccountManager implements Serializable {
                 statusMessage = "Something went wrong while creating user's account! See: " + e.getMessage();
                 return "";
             }
+            
+            if (password.equals("Google account, please update!")) {
+                FacesContext.getCurrentInstance().getExternalContext().
+                getSessionMap().put("isGoogleAccount", true);
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext().
+                getSessionMap().put("isGoogleAccount", false);
+            }
+            
             // Initialize the session map for the newly created User object (see the method below)
             initializeSessionMap();
 
@@ -730,6 +754,8 @@ public class AccountManager implements Serializable {
 
         // Obtain the object reference of the signed-in user
         User signedInUser = getUserFacade().findByUsername(usernameOfSignedInUser);
+        
+        System.out.println(usernameOfSignedInUser);
 
         // Obtain the id (primary key in the database) of the signedInUser object
         Integer userId = signedInUser.getId();

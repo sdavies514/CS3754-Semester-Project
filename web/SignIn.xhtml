@@ -7,7 +7,8 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!-- Do not enter tags before the composition line since they are ignored by JSF -->
 
@@ -20,9 +21,26 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
 
         <!-- Create the content for this page below -->
         <ui:define name="editableContent">
+            <h:head>
+                <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+                </script>
+                <script src="https://apis.google.com/js/client:platform.js?onload=start" async="defer">
+                </script>
+                <script>
+                    function start() {
+                        gapi.load('auth2', function () {
+                            auth2 = gapi.auth2.init({
+                                client_id: '152469586034-0gsehfd87qe5b58gr7jlvtopq2usreeb.apps.googleusercontent.com',
+                                // Scopes to request in addition to 'profile' and 'email'
+                                //scope: 'additional_scope'
+                            });
+                        });
+                    }
+                </script>
+            </h:head>
             <div align="center" style="width:70%; margin:0 auto;">
 
-                <h2>Sign In</h2>
+                
 
                 <!-- Error messages will be shown here if any -->
                 <div align="center">
@@ -32,7 +50,80 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                 </div>
                 <br />
 
-                <h:form>
+                <h:form id="loginForm">
+                    <div id="my-signin2"></div>
+                    <script>
+                        function onSuccess(googleUser) {
+                            auth2.grantOfflineAccess().then(signInCallback);
+                            $('#my-signin2').attr('style', 'display: none');
+                            console.log('Logged in as: ' + googleUser.getBasicProfile().getId());
+                            console.log('Logged in as: ' + googleUser.getBasicProfile().getGivenName());
+                            console.log('Logged in as: ' + googleUser.getBasicProfile().getFamilyName());
+                            console.log('Logged in as: ' + googleUser.getBasicProfile().getImageUrl());
+                            console.log('Logged in as: ' + googleUser.getBasicProfile().getEmail());
+                            document.getElementById("loginForm:googleUsername").value = googleUser.getBasicProfile().getEmail();
+                            document.getElementById("loginForm:googleFirstName").value = googleUser.getBasicProfile().getGivenName();
+                            document.getElementById("loginForm:googleLastName").value = googleUser.getBasicProfile().getFamilyName();
+                            document.getElementById("loginForm:googleImageUrl").value = googleUser.getBasicProfile().getImageUrl();
+                            document.getElementById("loginForm:googleId").value = googleUser.getBasicProfile().getId();
+                            sendGoogleInfo();
+                            window.location.href = "http://localhost:8080/CS3754-Semester-Project/Profile.xhtml"
+                        }
+                        function onFailure(error) {
+                            console.log(error);
+                        }
+                        function renderButton() {
+                            gapi.signin2.render('my-signin2', {
+                                'scope': 'profile',
+                                'width': 240,
+                                'height': 50,
+                                'longtitle': true,
+                                'theme': 'dark',
+                                'onsuccess': onSuccess,
+                                'onfailure': onFailure
+                            });
+                        }
+                    </script>
+                    <br/>
+                    <h2>Or Sign In with Your Thoughtware Account</h2>
+
+                    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async="defer"></script>
+
+<!--                    <button id="googleSignInButton" class="commandButton" ajax="false" icon="ui-icon-arrowthick-1-e">
+                        Sign In with Google
+                    </button>-->
+                    <script>
+//      $('#googleSignInButton').click(function () {
+//          // signInCallback defined in step 6.
+//          auth2.grantOfflineAccess().then(signInCallback);
+//          return false;
+//      });
+                    </script>
+                    <script>
+                        function signInCallback(authResult) {
+                            if (authResult['code']) {
+
+                                // Hide the sign-in button now that the user is authorized, for example:
+//                                $('#googleSignInButton').attr('style', 'display: none');
+                                console.log("test");
+                                return false;
+                            } else {
+                                console.log("error");
+                                return false;
+                                // There was an error.
+                            }
+                        }
+                    </script>
+
+                    <p:remoteCommand name="sendGoogleInfo" actionListener="#{loginManager.signedInWithGoogle()}">
+                    </p:remoteCommand>
+
+                    <h:inputHidden id="googleUsername" value="#{loginManager.googleUsername}"/>
+                    <h:inputHidden id="googleFirstName" value="#{loginManager.googleFirstName}"/>
+                    <h:inputHidden id="googleLastName" value="#{loginManager.googleLastName}"/>
+                    <h:inputHidden id="googleImageUrl" value="#{loginManager.googleImageUrl}"/>
+                    <h:inputHidden id="googleId" value="#{loginManager.googleId}"/>
+
                     <p:panelGrid columns="2" columnClasses="signInColumn1, signInColumn2">
 
                         <h:outputLabel value="Username:" for="username" />

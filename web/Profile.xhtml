@@ -7,7 +7,8 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <!-- Do not enter tags before the composition line since they are ignored by JSF -->
 
@@ -67,12 +68,14 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                                     </h:link>
                                 </li>
 
-                                <li class="verticalMenuItem">
-                                    <!-- CHANGE PASSWORD -->
-                                    <h:link outcome="EnterUsername">
-                                        <i class="fa fa-key">&nbsp;</i>Change Password
-                                    </h:link>
-                                </li>
+                                <c:if test="#{accountManager.isGoogleAccount() == false}">
+                                    <li class="verticalMenuItem">
+                                        <!-- CHANGE PASSWORD -->
+                                        <h:link outcome="EnterUsername">
+                                            <i class="fa fa-key">&nbsp;</i>Change Password
+                                        </h:link>
+                                    </li>
+                                </c:if>
 
                                 <li class="verticalMenuItem">
                                     <!-- DELETE ACCOUNT -->
