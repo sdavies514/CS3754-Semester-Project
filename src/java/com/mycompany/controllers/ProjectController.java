@@ -7,7 +7,6 @@ import com.mycompany.controllers.util.JsfUtil;
 import com.mycompany.controllers.util.JsfUtil.PersistAction;
 import com.mycompany.FacadeBeans.ProjectFacade;
 import com.mycompany.controllers.util.PasswordUtil;
-import com.mycompany.managers.AccountManager;
 
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
@@ -46,6 +45,10 @@ public class ProjectController implements Serializable {
 
     public void setSelected(Project selected) {
         this.selected = selected;
+    }
+
+    public boolean isSelectedProjectJoined(User currentUser) {
+        return userProjFacade.associationAlreadyExists(currentUser, selected);
     }
 
     /**
