@@ -11,8 +11,12 @@
             <h:form id="ProjectJoinForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{projectController.selected != null}">
-                        <p:outputLabel value="Enter Password: " for="hashedPassword" />
-                        <p:inputText id="hashedPassword" value="#{projectController.joinedPassword}" title="#{bundle.JoinProjectTitle_hashedPassword}" required="true" requiredMessage="#{bundle.JoinProjectRequiredMessage_hashedPassword}"/>
+
+                        <p:outputLabel value="Enter Password: " for="cleartextPassword" />
+                        <p:inputText id="cleartextPassword" value="#{projectController.cleartextPassword}"
+                                     title="#{bundle.JoinProjectTitle_cleartextPassword}" required="true"
+                                     requiredMessage="#{bundle.JoinProjectRequiredMessage_cleartextPassword}"/>
+
                     </p:panelGrid>
                     <p:commandButton actionListener="#{projectController.joinProject(accountManager.selected)}" value="Join" update="display,:ProjectListForm:datalist,:growl" oncomplete="PF('ProjectJoinDialog').hide()"/>
                     <p:commandButton value="#{bundle.Cancel}" onclick="PF('ProjectJoinDialog').hide()"/>

@@ -34,7 +34,7 @@ public class ProjectController implements Serializable {
     private com.mycompany.FacadeBeans.UserProjectAssociationFacade userProjFacade;
     private List<Project> items = null;
     private Project selected;
-    private String joinedPassword;
+    private String cleartextPassword;
 
     public ProjectController() {
     }
@@ -56,17 +56,17 @@ public class ProjectController implements Serializable {
     }
 
     /**
-     * @return the joinedPassword
+     * @return the cleartextPassword
      */
-    public String getJoinedPassword() {
-        return joinedPassword;
+    public String getCleartextPassword() {
+        return cleartextPassword;
     }
 
     /**
-     * @param joinedPassword the joinedPassword to set
+     * @param cleartextPassword the cleartextPassword to set
      */
-    public void setJoinedPassword(String joinedPassword) {
-        this.joinedPassword = joinedPassword;
+    public void setCleartextPassword(String cleartextPassword) {
+        this.cleartextPassword = cleartextPassword;
     }
 
     protected void setEmbeddableKeys() {
@@ -86,10 +86,10 @@ public class ProjectController implements Serializable {
     }
 
     public void create() throws NoSuchAlgorithmException {
-        // when creating a new project, the client stores the unhashed
-        // password in this field, so we must hash it and persist the hash
-        // instead.
-        selected.setHashedPassword(PasswordUtil.hashpw(selected.getHashedPassword()));
+        // when creating a new project, we must hash the cleartext password and
+        // persist the hash in the database instead of the cleartext password.
+        selected.setHashedPassword(PasswordUtil.hashpw(cleartextPassword));
+        cleartextPassword = null;
 
         // we also derive a key from the password that identifies this project
         // for the purposes of adding some security to its rss feed. But we
@@ -205,29 +205,29 @@ public class ProjectController implements Serializable {
     }
 
     public boolean joinProject(User currentUser) {
-        if (joinedPassword == null) {
+        if (cleartextPassword == null) {
             JsfUtil.addErrorMessage("Password was blank");
             return false;
         }
         if (currentUser == null) {
             JsfUtil.addErrorMessage("Not logged in");
-            joinedPassword = null;
+            cleartextPassword = null;
             return false;
         }
         if (userProjFacade.associationAlreadyExists(currentUser, selected)) {
             JsfUtil.addErrorMessage("You already joined the group");
-            joinedPassword = null;
+            cleartextPassword = null;
             return false;
         }
         try {
-            if (PasswordUtil.checkpw(joinedPassword, selected.getHashedPassword())) {
+            if (PasswordUtil.checkpw(cleartextPassword, selected.getHashedPassword())) {
                 Project currentProj = selected;
                 UserProjectAssociation create = new UserProjectAssociation();
                 create.setProjectId(currentProj);
                 create.setUserId(currentUser);
                 userProjFacade.create(create);
                 JsfUtil.addSuccessMessage("Sucessfully joined project");
-                joinedPassword = null;
+                cleartextPassword = null;
                 return true;
             } else {
                 JsfUtil.addErrorMessage("Incorrect Password");
@@ -235,7 +235,7 @@ public class ProjectController implements Serializable {
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        joinedPassword = null;
+        cleartextPassword = null;
         return false;
     }
 }
