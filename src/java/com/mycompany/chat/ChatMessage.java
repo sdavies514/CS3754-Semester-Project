@@ -1,24 +1,24 @@
 package com.mycompany.chat;
  
-public class Message {
+public class ChatMessage {
      
     private String text;
     private String user;
     private boolean updateList;
  
-    public Message() {
+    public ChatMessage() {
     }
  
-    public Message(String text) {
+    public ChatMessage(String text) {
         this.text = text;
     }
      
-    public Message(String text, boolean updateList) {
+    public ChatMessage(String text, boolean updateList) {
         this.text = text;
         this.updateList = updateList;
     }
  
-    public Message(String user, String text, boolean updateList) {
+    public ChatMessage(String user, String text, boolean updateList) {
         this.text = text;
         this.user = user;
         this.updateList = updateList;
@@ -28,7 +28,7 @@ public class Message {
         return text;
     }
  
-    public Message setText(String text) {
+    public ChatMessage setText(String text) {
         this.text = text;
         return this;
     }
@@ -37,7 +37,7 @@ public class Message {
         return user;
     }
  
-    public Message setUser(String user) {
+    public ChatMessage setUser(String user) {
         this.user = user;
         return this;
     }

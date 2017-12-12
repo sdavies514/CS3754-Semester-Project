@@ -1,5 +1,9 @@
 package com.mycompany.chat;
 
+import com.mycompany.EntityBeans.Message;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.faces.bean.ApplicationScoped;
 import org.primefaces.push.EventBus;
 import org.primefaces.push.RemoteEndpoint;
 import org.primefaces.push.annotation.OnClose;
@@ -14,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
-@PushEndpoint("/{user}")
-@Singleton
+@PushEndpoint("/{project}/{user}")
+@ApplicationScoped
 public class ChatResource {
 
     @Inject
@@ -27,17 +31,22 @@ public class ChatResource {
     @PathParam("user")
     private String username;
 
+    @PathParam("project")
+    private String projectName;
+
     @Inject
     private ServletContext ctx;
 
     @OnOpen
-    public void onOpen(RemoteEndpoint r, EventBus e) {
+    public void onOpen(RemoteEndpoint r, EventBus e) throws InterruptedException {
         if (username == null) {
+            System.out.println("WTF MAN");
             return;
         }
         logger.info("OnOpen {}", r);
         System.out.println("We opened " + r);
-        eventBus.publish("/*", new Message(String.format("%s has entered the room", username), true));
+        eventBus.publish("/" + projectName + "/*", new ChatMessage(String.format("%s has entered the %s room", username, projectName)));
+        e.publish("/" + projectName + "/*", new ChatMessage(String.format("%s has entered the %s room", username, projectName)));
     }
 
     @OnClose
@@ -45,15 +54,11 @@ public class ChatResource {
         if (username == null) {
             return;
         }
-        ChatUsers users = (ChatUsers) ctx.getAttribute("chatUsers");
-        users.remove(username);
-
-        eventBus.publish("/*", new Message(String.format("%s has left the room", username), true));
+        eventBus.publish("/" + projectName + "/*", new ChatMessage(String.format("%s has left the room", username), true));
     }
 
     @OnMessage(decoders = {MessageDecoder.class}, encoders = {MessageEncoder.class})
-    public Message onMessage(Message message) {
+    public ChatMessage onMessage(ChatMessage message) {
         return message;
     }
-
 }

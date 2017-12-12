@@ -1,87 +1,60 @@
 package com.mycompany.chat;
- 
+
+import com.mycompany.EntityBeans.Message;
+import com.mycompany.controllers.ProjectController;
 import com.mycompany.managers.AccountManager;
 import java.io.Serializable;
+import java.util.Date;
+import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.push.EventBus;
 import org.primefaces.push.EventBusFactory;
- 
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
- 
+
 @ManagedBean
 @SessionScoped
 public class ChatView implements Serializable {
-     
+
     //private final PushContext pushContext = PushContextFactory.getDefault().getPushContext();
- 
     private final EventBus eventBus = EventBusFactory.getDefault().eventBus();
- 
-    @ManagedProperty("#{chatUsers}")
-    private ChatUsers users;
-    
+
     @ManagedProperty("#{accountManager}")
     private AccountManager accountManager;
-    
-    private String privateMessage;
+
+    @ManagedProperty("#{projectController}")
+    private ProjectController projectController;
+
+    @EJB
+    private com.mycompany.FacadeBeans.MessageFacade messageFacade;
+
     private String globalMessage;
-    private String privateUser;
     private boolean isConnected;
-    
-    public ChatUsers getUsers() {
-        return users;
-    }
- 
-    public void setUsers(ChatUsers users) {
-        this.users = users;
-    }
-     
-    public String getPrivateUser() {
-        return privateUser;
-    }
- 
-    public void setPrivateUser(String privateUser) {
-        this.privateUser = privateUser;
-    }
- 
+
     public String getGlobalMessage() {
         return globalMessage;
     }
- 
+
     public void setGlobalMessage(String globalMessage) {
         this.globalMessage = globalMessage;
     }
- 
-    public String getPrivateMessage() {
-        return privateMessage;
-    }
- 
-    public void setPrivateMessage(String privateMessage) {
-        this.privateMessage = privateMessage;
-    }
- 
+
     public void sendGlobal() {
-        System.out.println("LESSGO");
-        eventBus.publish("/*", getAccountManager().getSelected().getUsername() + ": " + globalMessage);
-         
+        Message create = new Message();
+        create.setMessageText(globalMessage);
+        create.setProjectId(projectController.getSelected());
+        create.setUserId(accountManager.getSelected());
+        create.setTimestamp(new Date());
+        getMessageFacade().create(create);
+        eventBus.publish("/" + projectController.getSelected().getName() + "/*", getAccountManager().getSelected().getUsername() + ": " + globalMessage);
         globalMessage = null;
     }
-     
-    public void sendPrivate() {
-        System.out.println("privMessage is " + privateMessage);
-        eventBus.publish("/" + privateUser, "[PM] " + getAccountManager().getSelected().getUsername() + ": " + privateMessage);
-        privateMessage = null;
-    }
-     
-     
+
     public void disconnect() {
-        //remove user and update ui
-        users.remove(getAccountManager().getUsername());
-        RequestContext.getCurrentInstance().update("form:users");
-         
         //push leave information
-        eventBus.publish("/*", getAccountManager().getSelected().getUsername() + " left the channel.");
+        eventBus.publish("/" + projectController.getSelected().getName() + "/*", getAccountManager().getSelected().getUsername() + " left the channel.");
     }
 
     /**
@@ -110,5 +83,33 @@ public class ChatView implements Serializable {
      */
     public void setIsConnected(boolean isConnected) {
         this.isConnected = isConnected;
+    }
+
+    /**
+     * @return the projectController
+     */
+    public ProjectController getProjectController() {
+        return projectController;
+    }
+
+    /**
+     * @param projectController the projectController to set
+     */
+    public void setProjectController(ProjectController projectController) {
+        this.projectController = projectController;
+    }
+
+    /**
+     * @return the messageFacade
+     */
+    public com.mycompany.FacadeBeans.MessageFacade getMessageFacade() {
+        return messageFacade;
+    }
+
+    /**
+     * @param messageFacade the messageFacade to set
+     */
+    public void setMessageFacade(com.mycompany.FacadeBeans.MessageFacade messageFacade) {
+        this.messageFacade = messageFacade;
     }
 }
