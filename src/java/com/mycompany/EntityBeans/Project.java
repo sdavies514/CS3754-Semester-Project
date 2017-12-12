@@ -1,6 +1,6 @@
 /*
- * Created by Thomas Corley on 2017.12.04  * 
- * Copyright © 2017 Osman Balci. All rights reserved. * 
+ * Created by Thomas Corley on 2017.12.04  *
+ * Copyright © 2017 Osman Balci. All rights reserved. *
  */
 package com.mycompany.EntityBeans;
 
@@ -169,5 +169,5 @@ public class Project implements Serializable {
     public void setUserProjectAssociationCollection(Collection<UserProjectAssociation> userProjectAssociationCollection) {
         this.userProjectAssociationCollection = userProjectAssociationCollection;
     }
-    
+
 }
