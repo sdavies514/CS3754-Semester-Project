@@ -47,6 +47,10 @@ public class ProjectController implements Serializable {
         this.selected = selected;
     }
 
+    public boolean associationAlreadyExists(User user, Project project){
+        return userProjFacade.associationAlreadyExists(user, project);
+    }
+    
     public boolean isSelectedProjectJoined(User currentUser) {
         return userProjFacade.associationAlreadyExists(currentUser, selected);
     }

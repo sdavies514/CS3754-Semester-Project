@@ -33,6 +33,14 @@
                             </f:facet>
                             <h:outputText value="#{item.name}"/>
                         </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListProjectJoined_name}"/>
+                            </f:facet>
+                            <h:outputText value="#{projectController.associationAlreadyExists(accountManager.selected, item)}"/>
+                        </p:column>
+
                         <f:facet name="footer">
                             <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{projectController.prepareCreate}" update=":ProjectCreateForm" oncomplete="PF('ProjectCreateDialog').show()"/>
                             <p:commandButton id="joinButton"   icon="ui-icon-pencil" value="Join" update=":ProjectJoinForm" oncomplete="PF('ProjectJoinDialog').show()" disabled="#{empty projectController.selected or projectController.isSelectedProjectJoined(accountManager.selected)}"/>
