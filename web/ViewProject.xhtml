@@ -26,6 +26,11 @@
                             <h:outputText value="#{bundle.ViewProjectLabel_name}"/>
                             <h:outputText value="#{projectController.selected.name}" />
 
+                            <h:outputText value="#{bundle.ViewProjectLabel_rss}"/>
+                            <p:link href="webresources/rss?key=#{projectController.selected.rssKey}" target="_blank" class="dataFields">
+                                <i class="fa fa-rss">&nbsp;</i>
+                            </p:link>
+
                         </p:panelGrid>
                     </h:panelGroup>
                     <br /><br />

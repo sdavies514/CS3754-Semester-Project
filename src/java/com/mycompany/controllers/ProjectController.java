@@ -91,6 +91,13 @@ public class ProjectController implements Serializable {
         // instead.
         selected.setHashedPassword(PasswordUtil.hashpw(selected.getHashedPassword()));
 
+        // we also derive a key from the password that identifies this project
+        // for the purposes of adding some security to its rss feed. But we
+        // only want alphanumeric characters, so we remove any non-alphanumeric
+        // characters by replacing them with an empty string.
+        selected.setRssKey(PasswordUtil.hashpw(selected.getHashedPassword())
+                .replaceAll("[^A-Za-z0-9]", ""));
+
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("ProjectCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.

@@ -32,7 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p")
     , @NamedQuery(name = "Project.findById", query = "SELECT p FROM Project p WHERE p.id = :id")
     , @NamedQuery(name = "Project.findByHashedPassword", query = "SELECT p FROM Project p WHERE p.hashedPassword = :hashedPassword")
-    , @NamedQuery(name = "Project.findByName", query = "SELECT p FROM Project p WHERE p.name = :name")})
+    , @NamedQuery(name = "Project.findByName", query = "SELECT p FROM Project p WHERE p.name = :name")
+    , @NamedQuery(name = "Project.findByRssKey", query = "SELECT p FROM Project p WHERE p.rssKey = :rssKey")})
 public class Project implements Serializable {
 
     @OneToMany(mappedBy = "projectId")
@@ -57,6 +58,11 @@ public class Project implements Serializable {
     private String hashedPassword;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 64)
+    @Column(name = "rss_key")
+    private String rssKey;
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 256)
     @Column(name = "name")
     private String name;
@@ -70,9 +76,10 @@ public class Project implements Serializable {
         this.id = id;
     }
 
-    public Project(Integer id, String hashedPassword, String name) {
+    public Project(Integer id, String hashedPassword, String rssKey, String name) {
         this.id = id;
         this.hashedPassword = hashedPassword;
+        this.rssKey = rssKey;
         this.name = name;
     }
 
@@ -90,6 +97,14 @@ public class Project implements Serializable {
 
     public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
+    }
+
+    public String getRssKey() {
+        return rssKey;
+    }
+
+    public void setRssKey(String rssKey) {
+        this.rssKey = rssKey;
     }
 
     public String getName() {

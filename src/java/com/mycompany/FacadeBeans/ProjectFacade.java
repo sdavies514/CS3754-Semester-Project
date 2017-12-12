@@ -40,4 +40,16 @@ public class ProjectFacade extends AbstractFacade<Project> {
                     .getSingleResult();
         }
     }
+
+    public Project findByRssKey(String rssKey) {
+        if (em.createNamedQuery("Project.findByRssKey")
+                .setParameter("rssKey", rssKey)
+                .getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (Project) em.createNamedQuery("Project.findByRssKey")
+                    .setParameter("rssKey", rssKey)
+                    .getSingleResult();
+        }
+    }
 }

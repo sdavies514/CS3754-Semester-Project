@@ -61,30 +61,22 @@ public class ActivityFeed {
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public String getXml(@QueryParam("project_name") String projectName,
-            @QueryParam("project_password") String projectPassword)
+    public String getXml(@QueryParam("key") String key)
             throws FeedException, NoSuchAlgorithmException {
-//        Project entity = new Project();
-//        entity.setName("testproject");
-//        entity.setHashedPassword(PasswordUtil.hashpw("testpassword"));
-//        projectFacade.create(entity);
-
         List entries = new ArrayList();
-        Project project = projectFacade.findByName(projectName);
+        Project project = projectFacade.findByRssKey(key);
         if (project != null) {
-            if (PasswordUtil.checkpw(projectPassword, project.getHashedPassword())) {
-                for (Activity activity : activityFacade.findByProject(project)){
-                    SyndContent description = new SyndContentImpl();
-                    description.setType("text/plain");
-                    description.setValue(activity.getMessage());
+            for (Activity activity : activityFacade.findByProject(project)){
+                SyndContent description = new SyndContentImpl();
+                description.setType("text/plain");
+                description.setValue(activity.getMessage());
 
-                    SyndEntry entry = new SyndEntryImpl();
-                    entry.setTitle(activity.getType());
-                    entry.setLink("http://wiki.java.net/bin/view/Javawsxml/rome01");
-                    entry.setPublishedDate(activity.getTimestamp());
-                    entry.setDescription(description);
-                    entries.add(entry);
-                }
+                SyndEntry entry = new SyndEntryImpl();
+                entry.setTitle(activity.getType());
+                entry.setLink("http://wiki.java.net/bin/view/Javawsxml/rome01");
+                entry.setPublishedDate(activity.getTimestamp());
+                entry.setDescription(description);
+                entries.add(entry);
             }
         }
 

@@ -55,7 +55,8 @@ CREATE TABLE Project
 (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
     name VARCHAR (256) NOT NULL,
-    hashed_password VARCHAR (64) NOT NULL
+    hashed_password VARCHAR (64) NOT NULL,
+    rss_key VARCHAR (64) NOT NULL
 );
 
 DELIMITER $$
