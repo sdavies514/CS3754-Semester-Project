@@ -6,7 +6,6 @@ package com.mycompany.rss;
 
 import com.mycompany.EntityBeans.Activity;
 import com.mycompany.EntityBeans.Project;
-import com.mycompany.controllers.util.PasswordUtil;
 import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndContentImpl;
 import com.rometools.rome.feed.synd.SyndEntry;

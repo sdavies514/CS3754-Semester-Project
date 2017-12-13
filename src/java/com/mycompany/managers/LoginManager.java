@@ -118,11 +118,27 @@ public class LoginManager implements Serializable {
                 return "";
             }
 
+            // When authenticating a user, we must take the cleartext user
+            // password the user entered and compare it against the password
+            // that's stored in the database for that user. Since we're
+            // storing the hashed password in the database, we must salt the
+            // cleartext password with the same salt as the password stored in
+            // the database and hash it then compare the two hashes. This is all
+            // encapsulated within a single call to checkpw, and we only need to
+            // pass the cleartext password and the hashed password since the
+            // hashed password is stored in Modular Crypt Format which means it
+            // includes the cost parameter and salt that was used to hash it.
             if (!PasswordUtil.checkpw(enteredPassword, actualHashedPassword)) {
+                // If the user entered the wrong password, then we must set an
+                // error message in order to indicate that the authentication
+                // has failed.
                 errorMessage = "Invalid Password!";
                 return "";
             }
 
+            // If the user entered the right password, then we must clear the
+            // error message in order to indicate that the authentication has
+            // succeeded.
             errorMessage = "";
 
             // Initialize the session map with user properties of interest

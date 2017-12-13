@@ -205,7 +205,9 @@ public class PasswordResetManager implements Serializable {
             User user = getUserFacade().findByUsername(username);
 
             try {
-                // Reset User object's password
+                // When resetting a user's password, we must hash the new
+                // cleartext password and persist the hash in the database
+                // instead of the cleartext password.
                 user.setHashedPassword(PasswordUtil.hashpw(password));
 
                 // Update the database
