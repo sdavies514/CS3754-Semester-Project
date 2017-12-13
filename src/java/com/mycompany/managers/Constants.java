@@ -12,32 +12,35 @@ public final class Constants {
 
     /* =========== Our Design Decision ===========
         We decided to use directories external to our application
-        for the storage and retrieval of user's files.
+        for the storage and retrieval of user and project files.
 
         We do not want to use a database for the following reasons:
             (a) Database storage and retrieval of large files as
                 BLOB (binary large object) degrades performance.
             (b) BLOBs increase the database complexity.
 
-        Therefore, we use the following two external directories
-        for the storage and retrieval of user's files.
+        Therefore, we use the following three external directories
+        for the storage and retrieval of user and project files.
      */
-    public static final String FILES_ABSOLUTE_PATH = "C:\\Users\\CJ\\ThoughtwareStorage\\FileStorage\\";
-//    public static final String FILES_ABSOLUTE_PATH = "/home/cloudsd/Butenhoff/ThoughtwareStorage/FileStorage/";
-    public static final String PHOTOS_ABSOLUTE_PATH = "C:\\Users\\CJ\\ThoughtwareStorage\\PhotoStorage\\";
+    public static final String USER_FILES_ABSOLUTE_PATH = "/Users/kyledyess/Team7-FileStorage/UserFiles/";
+    public static final String PROJECT_FILES_ABSOLUTE_PATH = "/Users/kyledyess/Team7-FileStorage/ProjectFiles/";
+    
+//    public static final String USER_FILES_ABSOLUTE_PATH = "/home/cloudsd/Butenhoff/ThoughtwareStorage/FileStorage/";
+    public static final String PHOTOS_ABSOLUTE_PATH = "/Users/kyledyess/Team7-FileStorage/PhotoStorage/";
 //    public static final String PHOTOS_ABSOLUTE_PATH = "/home/cloudsd/Butenhoff/ThoughtwareStorage/PhotoStorage/";
 
     /*
     In glassfish-web.xml file, we designated the '/ThoughtwareStorage/' directory as the
     Alternate Document Root directory with the following statement:
 
-        <property name="alternatedocroot_1" value="from=/ThoughtwareStorage/* dir=/home/cloudsd/Butenhoff" />
+        <property name="alternatedocroot_1" value="from=/Team7-FileStorage/* dir=/home/cloudsd/Butenhoff" />
 
     Relative path is defined with respect to the Alternate Document Root starting with 'ThoughtwareStorage'.
      */
-    public static final String FILES_RELATIVE_PATH = "ThoughtwareStorage/FileStorage/";
-    public static final String PHOTOS_RELATIVE_PATH = "ThoughtwareStorage/PhotoStorage/";
-    public static final String DEFAULT_PHOTO_RELATIVE_PATH = "ThoughtwareStorage/PhotoStorage/defaultUserPhoto.png";
+    public static final String USER_FILES_RELATIVE_PATH = "Team7-FileStorage/UserFiles/";
+    public static final String PROJECT_FILES_RELATIVE_PATH = "Team7-FileStorage/ProjectFiles/";
+    public static final String PHOTOS_RELATIVE_PATH = "Team7-FileStorage/PhotoStorage/";
+    public static final String DEFAULT_PHOTO_RELATIVE_PATH = "Team7-FileStorage/PhotoStorage/defaultUserPhoto.png";
 
     /* Temporary filename */
     public static final String TEMP_FILE = "tmp_file";

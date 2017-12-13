@@ -4,6 +4,7 @@
  */
 package com.mycompany.EntityBeans;
 
+import com.mycompany.managers.Constants;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -27,27 +28,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "ProjectFile")
 @XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "ProjectFile.findAll", query = "SELECT p FROM ProjectFile p")
-    , @NamedQuery(name = "ProjectFile.findById", query = "SELECT p FROM ProjectFile p WHERE p.id = :id")
-    , @NamedQuery(name = "ProjectFile.findByFileLocation", query = "SELECT p FROM ProjectFile p WHERE p.fileLocation = :fileLocation")})
+    @NamedQuery(name = "ProjectFile.findAll", 
+            query = "SELECT p FROM ProjectFile p")
+    , @NamedQuery(name = "ProjectFile.findById", 
+            query = "SELECT p FROM ProjectFile p WHERE p.id = :id")
+    , @NamedQuery(name = "ProjectFile.findProjectFilesByProjectId", 
+            query = "SELECT p FROM ProjectFile p WHERE p.projectId.id = :projectId")
+    , @NamedQuery(name = "ProjectFile.findByFileLocation", 
+            query = "SELECT p FROM ProjectFile p WHERE p.fileLocation = :fileLocation")})
+
 public class ProjectFile implements Serializable {
 
+    /*
+    ========================================================
+    Instance variables representing the attributes (columns)
+    of the ProjectFile table in the ThoughtwareDB database.
+    ========================================================
+     */
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 256)
     @Column(name = "file_location")
     private String fileLocation;
+    
     @JoinColumn(name = "project_id", referencedColumnName = "id")
     @ManyToOne
     private Project projectId;
 
+    /*
+    ===================================================================
+    Class constructors for instantiating a ProjectFile entity object to
+    represent a row in the ProjectFile table in the ThoughtwareDB database.
+    ===================================================================
+     */
     public ProjectFile() {
     }
 
@@ -59,7 +81,18 @@ public class ProjectFile implements Serializable {
         this.id = id;
         this.fileLocation = fileLocation;
     }
+    
+    public ProjectFile(String fileLocation, Project id) {
+        this.fileLocation = fileLocation;
+        this.projectId = id;
+    }
 
+    /*
+    ======================================================
+    Getter and Setter methods for the attributes (columns)
+    of the ProjectFile table in the ThoughtwareDB database.
+    ======================================================
+     */
     public Integer getId() {
         return id;
     }
@@ -84,6 +117,14 @@ public class ProjectFile implements Serializable {
         this.projectId = projectId;
     }
 
+    /*
+    ================
+    Instance Methods
+    ================
+     */
+    /**
+     * @return Generates and returns a hash code value for the object with id
+     */
     @Override
     public int hashCode() {
         int hash = 0;
@@ -91,6 +132,12 @@ public class ProjectFile implements Serializable {
         return hash;
     }
 
+    /**
+     * Checks if the ProjectFile object identified by 'object' is the same as the ProjectFile object identified by 'id'
+     *
+     * @param object The ProjectFile object identified by 'object'
+     * @return True if the ProjectFile 'object' and 'id' are the same; otherwise, return False
+     */
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -104,9 +151,20 @@ public class ProjectFile implements Serializable {
         return true;
     }
 
+    /**
+     * @return the String representation of a ProjectFile id
+     */
     @Override
     public String toString() {
-        return "com.mycompany.EntityBeans.ProjectFile[ id=" + id + " ]";
+        return id.toString();
     }
     
+    /*
+    ===================================================
+    The following method is added to the generated code
+    ===================================================
+     */
+    public String getFilePath() {
+        return Constants.PROJECT_FILES_ABSOLUTE_PATH + getFileLocation();
+    }
 }
