@@ -147,10 +147,10 @@ Copyright © 2017 Shane Davies. All rights reserved.
                                     and displays that image or the user's local
                                     profile image.
                             -->
-                            <c:if test="#{accountManager.selected.googleImageUrl != null}">
+                            <c:if test="#{accountManager.isGoogleAccount()}">
                                 <h:graphicImage class="profilePhoto" value="#{accountManager.selected.googleImageUrl}" />
                             </c:if>
-                            <c:if test="#{accountManager.selected.googleImageUrl == null}">
+                            <c:if test="#{accountManager.isGoogleAccount() == false}">
                                 <h:graphicImage class="profilePhoto" value="#{accountManager.userPhoto()}" />
                             </c:if>
                             <br />

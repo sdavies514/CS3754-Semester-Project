@@ -354,10 +354,10 @@ public class AccountManager implements Serializable {
 
     // Returns if the currently logged in account did so by using Google OAuth
     public boolean isGoogleAccount() {
-        if (password == null) {
+        if (!getSelected().getGoogleImageUrl().equals("N/A")) {
             return true;
         } else {
-            return password.equals("Google account, please update!");
+            return false;
         }
     }
 
@@ -410,7 +410,12 @@ public class AccountManager implements Serializable {
                 // password.
                 newUser.setHashedPassword(PasswordUtil.hashpw(password));
                 //Sets the user image displayed by google
-                newUser.setGoogleImageUrl(googleImageUrl);
+                if (googleImageUrl != null) {
+                    newUser.setGoogleImageUrl(googleImageUrl);
+                } else {
+                    newUser.setGoogleImageUrl("N/A");
+                }
+                
 
                 getUserFacade().create(newUser);
                 selected = newUser;
