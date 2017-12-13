@@ -22,6 +22,6 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
     requests for certain resources from outside their own docroot"
     See page C-46 in [https://glassfish.java.net/docs/4.0/application-deployment-guide.pdf]
   -->
-  <property name="alternatedocroot_1" value="from=/Team7-FileStorage/* dir=/Users/kyledyess"/>
+  <property name="alternatedocroot_1" value="from=/Team7-FileStorage/* dir=/Users/ilikepie529"/>
   <!--<property name="alternatedocroot_1" value="from=/ThoughtwareStorage/* dir=/home/cloudsd/Butenhoff" />-->
 </glassfish-web-app>

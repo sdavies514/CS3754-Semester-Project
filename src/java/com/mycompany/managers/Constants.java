@@ -22,11 +22,11 @@ public final class Constants {
         Therefore, we use the following three external directories
         for the storage and retrieval of user and project files.
      */
-    public static final String USER_FILES_ABSOLUTE_PATH = "/Users/kyledyess/Team7-FileStorage/UserFiles/";
-    public static final String PROJECT_FILES_ABSOLUTE_PATH = "/Users/kyledyess/Team7-FileStorage/ProjectFiles/";
+    public static final String USER_FILES_ABSOLUTE_PATH = "/Users/ilikepie529/Team7-FileStorage/UserFiles/";
+    public static final String PROJECT_FILES_ABSOLUTE_PATH = "/Users/ilikepie529/Team7-FileStorage/ProjectFiles/";
     
 //    public static final String USER_FILES_ABSOLUTE_PATH = "/home/cloudsd/Butenhoff/ThoughtwareStorage/FileStorage/";
-    public static final String PHOTOS_ABSOLUTE_PATH = "/Users/kyledyess/Team7-FileStorage/PhotoStorage/";
+    public static final String PHOTOS_ABSOLUTE_PATH = "/Users/ilikepie529/Team7-FileStorage/PhotoStorage/";
 //    public static final String PHOTOS_ABSOLUTE_PATH = "/home/cloudsd/Butenhoff/ThoughtwareStorage/PhotoStorage/";
 
     /*

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Created by Casey Butenhoff on 2017.11.18
-Copyright © 2017 Casey Butenhoff. All rights reserved.
+Created by Shane Davies on 2017.11.18
+Copyright © 2017 Shane Davies. All rights reserved.
 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <!-- Do not enter tags before the composition line since they are ignored by JSF -->
 
@@ -25,7 +26,6 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                 You can place p:growl anywhere on your JSF page since the messages are displayed
                 as an overlay. The life attribute defines how long the message will be displayed
                 in milliseconds after which it will fade away. 5000 milliseconds = 5 seconds
-
                 All 'FacesMessage resultMsg' will be displayed here.
             -->
             <p:growl id="growl" life="5000" />
@@ -59,7 +59,12 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                                         <i class="fa fa-pencil-square-o">&nbsp;</i>Edit Profile
                                     </h:link>
                                 </li>
-
+                                <!--
+                                If the user has logged in using Google, disables the
+                                ability to change their photo and change their password
+                                as this is handled by Google.
+                                -->
+                                <c:if test="#{accountManager.isGoogleAccount() == false}">
                                 <li class="verticalMenuItem">
                                     <!-- CHANGE PHOTO -->
                                     <h:link outcome="ChangePhoto">
@@ -67,12 +72,14 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                                     </h:link>
                                 </li>
 
-                                <li class="verticalMenuItem">
-                                    <!-- CHANGE PASSWORD -->
-                                    <h:link outcome="EnterUsername">
-                                        <i class="fa fa-key">&nbsp;</i>Change Password
-                                    </h:link>
-                                </li>
+                                
+                                    <li class="verticalMenuItem">
+                                        <!-- CHANGE PASSWORD -->
+                                        <h:link outcome="EnterUsername">
+                                            <i class="fa fa-key">&nbsp;</i>Change Password
+                                        </h:link>
+                                    </li>
+                                </c:if>
 
                                 <li class="verticalMenuItem">
                                     <!-- DELETE ACCOUNT -->
@@ -135,8 +142,17 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
 
                             <h2> #{accountManager.selected.firstName} #{accountManager.selected.lastName}'s Account Profile </h2>
 
-                            <!-- USER'S PROFILE PHOTO -->
-                            <h:graphicImage class="profilePhoto" value="#{accountManager.userPhoto()}" />
+                            <!-- USER'S PROFILE PHOTO
+                                    Determines if the user logged in with Google
+                                    and displays that image or the user's local
+                                    profile image.
+                            -->
+                            <c:if test="#{accountManager.selected.googleImageUrl != null}">
+                                <h:graphicImage class="profilePhoto" value="#{accountManager.selected.googleImageUrl}" />
+                            </c:if>
+                            <c:if test="#{accountManager.selected.googleImageUrl == null}">
+                                <h:graphicImage class="profilePhoto" value="#{accountManager.userPhoto()}" />
+                            </c:if>
                             <br />
                             <br />
                             <p:panelGrid columns="2" columnClasses="profileColumn1, profileColumn2" >

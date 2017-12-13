@@ -144,6 +144,11 @@ public class User implements Serializable {
     @Column(name = "email")
     private String email;
 
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "google_image_url")
+    private String googleImageUrl;
+
     @OneToMany(mappedBy = "userId")
     private Collection<UserPhoto> userPhotoCollection;
 
@@ -296,6 +301,14 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public String getGoogleImageUrl() {
+        return googleImageUrl;
+    }
+
+    public void setGoogleImageUrl(String googleImageUrl) {
+        this.googleImageUrl = googleImageUrl;
+    }
+
     // The @XmlTransient annotation is used to resolve potential name collisions
     // between a JavaBean property name and a field name.
     @XmlTransient
@@ -332,10 +345,12 @@ public class User implements Serializable {
     }
 
     /**
-     * Checks if the User object identified by 'object' is the same as the User object identified by 'id'
+     * Checks if the User object identified by 'object' is the same as the User
+     * object identified by 'id'
      *
      * @param object The User object identified by 'object'
-     * @return True if the User 'object' and 'id' are the same; otherwise, return False
+     * @return True if the User 'object' and 'id' are the same; otherwise,
+     * return False
      */
     @Override
     public boolean equals(Object object) {

@@ -52,7 +52,7 @@ However, we spell it out to make our code more readable and understandable.
 ---------------------------------------------------------------------------
  */
 @Named(value = "accountManager")
-@ManagedBean(eager=true)
+@ManagedBean(eager = true)
 /*
 The @SessionScoped annotation preserves the values of the AccountManager
 object's instance variables across multiple HTTP request-response cycles
@@ -98,6 +98,7 @@ public class AccountManager implements Serializable {
     private String city;
     private String state;
     private String zipcode;
+    private String googleImageUrl;
 
     private int securityQuestion;
     private String securityAnswer;
@@ -235,6 +236,15 @@ public class AccountManager implements Serializable {
         this.zipcode = zip_code;
     }
 
+    public String getGoogleImageUrl() {
+        System.out.println("Image URL: " + googleImageUrl);
+        return googleImageUrl;
+    }
+
+    public void setGoogleImageUrl(String googleImageUrl) {
+        this.googleImageUrl = googleImageUrl;
+    }
+
     public int getSecurityQuestion() {
         return securityQuestion;
     }
@@ -270,7 +280,7 @@ public class AccountManager implements Serializable {
     public UserPhotoFacade getUserPhotoFacade() {
         return userPhotoFacade;
     }
-    
+
     /*
     private Map<String, Object> security_questions;
         String      int
@@ -331,7 +341,7 @@ public class AccountManager implements Serializable {
     public void setSelected(User selectedUser) {
         this.selected = selectedUser;
     }
-    
+
     /*
     ================
     Instance Methods
@@ -340,6 +350,15 @@ public class AccountManager implements Serializable {
     // Return True if a user is logged in; otherwise, return False
     public boolean isLoggedIn() {
         return FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username") != null;
+    }
+
+    // Returns if the currently logged in account did so by using Google OAuth
+    public boolean isGoogleAccount() {
+        if (password == null) {
+            return true;
+        } else {
+            return password.equals("Google account, please update!");
+        }
     }
 
     /*
@@ -390,8 +409,11 @@ public class AccountManager implements Serializable {
                 // and persist the hash in the database instead of the cleartext
                 // password.
                 newUser.setHashedPassword(PasswordUtil.hashpw(password));
+                //Sets the user image displayed by google
+                newUser.setGoogleImageUrl(googleImageUrl);
 
                 getUserFacade().create(newUser);
+                selected = newUser;
 
             } catch (EJBException e) {
                 username = "";
@@ -400,6 +422,16 @@ public class AccountManager implements Serializable {
             }
             // Initialize the session map for the newly created User object (see the method below)
             initializeSessionMap();
+            
+            //Determines if the account is a google account and sets a session
+            //map variable accordingly
+            if (password.equals("Google account, please update!")) {
+                FacesContext.getCurrentInstance().getExternalContext().
+                getSessionMap().put("isGoogleAccount", true);
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext().
+                getSessionMap().put("isGoogleAccount", false);
+            }
 
             /*
             The Profile page cannot be shown since the new User has not signed in yet.
