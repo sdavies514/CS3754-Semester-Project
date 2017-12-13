@@ -6,6 +6,8 @@ import com.mycompany.EntityBeans.UserProjectAssociation;
 import com.mycompany.controllers.util.JsfUtil;
 import com.mycompany.controllers.util.JsfUtil.PersistAction;
 import com.mycompany.FacadeBeans.ProjectFacade;
+import com.mycompany.FacadeBeans.UserFacade;
+import com.mycompany.FacadeBeans.UserProjectAssociationFacade;
 import com.mycompany.controllers.util.PasswordUtil;
 
 import java.io.Serializable;
@@ -18,7 +20,6 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -28,11 +29,18 @@ import javax.faces.convert.FacesConverter;
 @SessionScoped
 public class ProjectController implements Serializable {
 
+    /* The instance variable 'userFacade' is annotated with the @EJB annotation.
+    The @EJB annotation directs the EJB Container (of the GlassFish AS) to inject (store) the object reference
+    of the UserFacade object, after it is instantiated at runtime, into the instance variable 'userFacade'.
+     */
     @EJB
-    private com.mycompany.FacadeBeans.ProjectFacade ejbFacade;
+    private ProjectFacade ejbFacade;
     @EJB
-    private com.mycompany.FacadeBeans.UserProjectAssociationFacade userProjFacade;
+    private UserProjectAssociationFacade userProjFacade;
+    @EJB
+    private UserFacade userFacade;
     private List<Project> items = null;
+    private List<Project> userItems = null;
     private Project selected;
     private String cleartextPassword;
 
@@ -78,6 +86,14 @@ public class ProjectController implements Serializable {
     private ProjectFacade getFacade() {
         return ejbFacade;
     }
+    
+    private UserFacade getUserFacade() {
+        return userFacade;
+    }
+    
+    private UserProjectAssociationFacade getUserProjFacade() {
+        return userProjFacade;
+    }
 
     public Project prepareCreate() {
         selected = new Project();
@@ -121,6 +137,21 @@ public class ProjectController implements Serializable {
             items = getFacade().findAll();
         }
         return items;
+    }
+    
+    public List<Project> getUserItems() {
+        if (userItems == null) {
+            // Obtain the signed-in user's username
+            String usernameOfSignedInUser = (String) FacesContext.getCurrentInstance()
+                    .getExternalContext().getSessionMap().get("username");
+
+            // Obtain the object reference of the signed-in user
+            User signedInUser = getUserFacade().findByUsername(usernameOfSignedInUser);
+
+            // Obtain only those projects from the database that belong to the signed-in user
+            userItems = getUserProjFacade().getProjectsForUser(signedInUser);
+        }
+        return userItems;
     }
 
     private void persist(PersistAction persistAction, String successMessage) {

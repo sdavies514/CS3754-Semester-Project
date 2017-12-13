@@ -181,6 +181,16 @@ Create Table ProjectFile
     FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
 );
 
+Create Table Activity
+(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    type VARCHAR (256) NOT NULL,
+    message VARCHAR (256) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    project_id INT UNSIGNED,
+    FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
+);
+
 DELIMITER $$
 CREATE TRIGGER `project_file_after_insert` AFTER INSERT
 	ON `ProjectFile`
@@ -231,16 +241,6 @@ CREATE TRIGGER `project_file_after_delete` AFTER DELETE
 		);
     END$$
 DELIMITER ;
-
-Create Table Activity
-(
-    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    type VARCHAR (256) NOT NULL,
-    message VARCHAR (256) NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    project_id INT UNSIGNED,
-    FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
-);
 
 Create Table Milestone
 (

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created by Casey Butenhoff on 2017.11.18
+Copyright © 2017 Casey Butenhoff. All rights reserved.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- Do not enter tags before the composition line since they are ignored by JSF -->
+
+    <!-- This page is constructed based on the siteTemplate -->
+    <ui:composition template="template/siteTemplate.xhtml">
+        <ui:define name="title">
+            <!-- Set the page title -->
+            <h:outputText value="Sign In"></h:outputText>
+        </ui:define>
+        <!-- Create the content for this page below -->
+        <ui:define name="editableContent">
+            <p:growl id="growl" showDetail="true" />
+            <script type="text/javascript">
+                function handleMessage(message) {
+                    var chatContent = $(PrimeFaces.escapeClientId('form:public')),
+                            text = (message.user) ? message.user + ':' + message.text : message.text;
+
+                    chatContent.append(text + '<br />');
+
+                    //keep scroll
+                    chatContent.scrollTop(chatContent.height());
+
+                    if (message.updateList) {
+                        updateList();
+                    }
+                }
+            </script>
+            <h:form id="form">
+                <p:remoteCommand name="updateList" update="users" process="@this" />
+
+                <p:fieldset id="container" legend="PrimeChat" toggleable="true">
+
+                    <h:panelGroup rendered="#{accountManager.isLoggedIn()}">
+                        <h:panelGrid columns="2" columnClasses="publicColumn,usersColumn" style="width:100%">
+                            <p:outputPanel id="public" layout="block" styleClass="ui-corner-all ui-widget-content chatlogs" />
+
+                            <p:dataList id="users" var="user" value="#{chatUsers.users}" styleClass="usersList">
+                                <f:facet name="header">
+                                    Users
+                                </f:facet>
+
+                                <p:commandButton title="Chat" icon="ui-icon-comment" oncomplete="PF('pChat').show()" update=":form:privateChatContainer">
+                                    <f:setPropertyActionListener value="#{user}" target="#{chatView.privateUser}" />
+                                </p:commandButton>
+                                #{user}
+                            </p:dataList>
+                        </h:panelGrid>
+
+                        <p:separator />
+
+                        <p:inputText value="#{chatView.globalMessage}" styleClass="messageInput" />
+                        <p:spacer width="5" />
+                        <p:commandButton value="Send" actionListener="#{chatView.sendGlobal}" oncomplete="$('.messageInput').val('').focus()" />
+                        <p:spacer width="5" />
+                        <p:commandButton value="Disconnect" actionListener="#{chatView.disconnect}" global="false" update="container" />
+                    </h:panelGroup>
+
+                </p:fieldset>
+
+                <p:dialog widgetVar="pChat" header="Private Chat" modal="true" showEffect="fade" hideEffect="fade">
+                    <h:panelGrid id="privateChatContainer" columns="2" columnClasses="vtop,vtop">
+                        <p:outputLabel for="pChatInput" value="To: #{chatView.privateUser}" />
+                        <p:inputTextarea id="pChatInput" value="#{chatView.privateMessage}" rows="5" cols="30" />
+
+                        <p:spacer />
+                        <p:commandButton value="Send" actionListener="#{chatView.sendPrivate}" oncomplete="PF('pChat').hide()" />
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            <c:if test="#{accountManager.isLoggedIn()}">
+                <p:socket onMessage="handleMessage" channel="/"/>
+                <p:socket onMessage="handleMessage" channel="/#{accountManager.selected.username}"/>
+            </c:if>
+        </ui:define>
+    </ui:composition>
+    <!-- Do not enter tags after the composition line since they are ignored by JSF -->
+</html>

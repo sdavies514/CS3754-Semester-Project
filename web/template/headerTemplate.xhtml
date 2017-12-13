@@ -8,7 +8,9 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!--
     *********************************************
@@ -46,39 +48,39 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
 
                     </td>
                     <td align="right" valign="middle">
-
-                        <h:link outcome="/index" styleClass="arialTen">
-                            <i class="fa fa-home">&nbsp;</i>Home
-                        </h:link>&nbsp;&nbsp;
-
-                        <c:if test="#{accountManager.isLoggedIn() == true}">
-                            <h:commandLink action="#{accountManager.logout()}" styleClass="arialTen" >
-                                <i class="fa fa-sign-out">&nbsp;</i>Sign Out
-                            </h:commandLink>&nbsp;&nbsp;
-
-                            <h:link outcome="/Profile" styleClass="arialTen">
-                                <i class="fa fa-user">&nbsp;</i>My Account
-                            </h:link>&nbsp;&nbsp;
-
-                            <h:link outcome="/UserFiles" styleClass="arialTen">
-                                <i class="fa fa-files-o">&nbsp;</i>My Files
-                            </h:link>&nbsp;&nbsp;
-
-                            <h:link outcome="/ListProject.xhtml" styleClass="arialTen">
-                                <i class="fa fa-tasks">&nbsp;</i>Projects
-                            </h:link>&nbsp;&nbsp;
-                        </c:if>
-
-                        <c:if test="#{accountManager.isLoggedIn() == false}">
-                            <h:link outcome="/SignIn" styleClass="arialTen">
-                                <i class="fa fa-sign-in">&nbsp;</i>Sign In
-                            </h:link>&nbsp;&nbsp;
-
-                            <h:link outcome="/CreateAccount" styleClass="arialTen">
-                                <i class="fa fa-user-plus">&nbsp;</i>Create an Account
-                            </h:link>&nbsp;&nbsp;
-                        </c:if>
-
+                        
+                        <p:menubar style="width: 475px">
+                            <p:menuitem value="Home" outcome="/index" styleClass="arialTen" icon="fa fa-home" />
+                            
+                            <c:if test="#{accountManager.isLoggedIn() == true}">
+                                <p:submenu label="My Projects" icon="ui-icon-bookmark">
+                                    <c:forEach items="#{projectController.getUserItems()}" var="proj">
+                                        <p:submenu label="#{proj.name}">
+                                            <p:menuitem value="Project Home" outcome="/index" />
+                                            <p:menuitem value="Chat" outcome="/index" />
+                                            <p:menuitem value="Timeline" outcome="/index" />
+                                            <p:menuitem value="Files" outcome="/index" />
+                                            <p:menuitem value="Calendar" outcome="/index" />
+                                        </p:submenu>
+                                    </c:forEach>
+                                </p:submenu>
+                                
+                                <p:menuitem value="My Account" outcome="/Profile" styleClass="arialTen" icon="fa fa-user" />
+                                
+                                <p:menuitem value="Projects" outcome="/ProjectList" styleClass="arialTen" icon="fa fa-tasks" />
+                                
+                                <f:facet name="options">
+                                    <p:commandButton value="Sign Out" action="#{accountManager.logout()}" 
+                                                     styleClass="commandButton" icon="fa fa-sign-out" />
+                                </f:facet>
+                            </c:if>
+                            
+                            <c:if test="#{accountManager.isLoggedIn() == false}">
+                                <p:menuitem value="Sign In" outcome="/SignIn" styleClass="arialTen" icon="fa fa-sign-in" />
+                                
+                                <p:menuitem value="Create an Account" outcome="/CreateAccount" styleClass="arialTen" icon="fa fa-user-plus" />
+                            </c:if>
+                        </p:menubar>
                     </td>
                 </tr>
             </table>

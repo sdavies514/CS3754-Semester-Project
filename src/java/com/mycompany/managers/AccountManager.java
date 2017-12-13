@@ -270,7 +270,7 @@ public class AccountManager implements Serializable {
     public UserPhotoFacade getUserPhotoFacade() {
         return userPhotoFacade;
     }
-
+    
     /*
     private Map<String, Object> security_questions;
         String      int
