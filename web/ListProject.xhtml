@@ -43,8 +43,12 @@
                         </p:column>
 
                         <f:facet name="footer">
-                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{projectController.prepareCreate}" update=":ProjectCreateForm" oncomplete="PF('ProjectCreateDialog').show()"/>
-                            <p:commandButton id="viewButton"   icon="ui-icon-document" value="View" action="ViewProject?faces-redirect=true" disabled="#{empty projectController.selected or !projectController.isSelectedProjectJoined(accountManager.selected)}"/>
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" 
+                                             actionListener="#{projectController.prepareCreate}" update=":ProjectCreateForm" 
+                                             oncomplete="PF('ProjectCreateDialog').show()"/>
+                            <p:commandButton id="viewButton"   icon="ui-icon-document" value="View" 
+                                             action="#{projectViewManager.showProjectHome(projectController.selected)}" 
+                                             disabled="#{empty projectController.selected or !projectController.isSelectedProjectJoined(accountManager.selected)}"/>
                             <p:commandButton id="joinButton"   icon="ui-icon-pencil" value="Join" update=":ProjectJoinForm" oncomplete="PF('ProjectJoinDialog').show()" disabled="#{empty projectController.selected or projectController.isSelectedProjectJoined(accountManager.selected)}"/>
                         </f:facet>
                     </p:dataTable>

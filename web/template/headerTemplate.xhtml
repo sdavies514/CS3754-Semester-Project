@@ -56,15 +56,7 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                                 <p:submenu label="My Projects" icon="ui-icon-bookmark">
                                     <c:forEach items="#{projectController.getUserItems()}" var="proj">
                                         <p:submenu label="#{proj.name}">
-                                            <!--
-                                            <p:menuitem value="Project Home"  />
-                                            <p:menuitem value="Chat"  />
-                                            <p:menuitem value="Timeline"  />
-                                            <p:menuitem value="Files"  />
-                                            <p:menuitem value="Calendar"  />-->
-                                            
                                             <p:menuitem value="Project Home" action="#{projectViewManager.showProjectHome(proj)}"  />
-                                            <p:menuitem value="Chat" action="#{projectViewManager.showProjectChat(proj)}" />
                                             <p:menuitem value="Timeline" action="#{projectViewManager.showProjectTimeline(proj)}" />
                                             <p:menuitem value="Files" action="#{projectViewManager.showProjectFiles(proj)}" />
                                             <p:menuitem value="Calendar" action="#{projectViewManager.showProjectCalendar(proj)}" /> 

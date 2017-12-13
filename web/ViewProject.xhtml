@@ -22,13 +22,13 @@
                     <h:panelGroup id="display">
 
                         <p:panelGrid columns="2" columnClasses="columnOne, columnTwo"
-                                     rendered="#{projectController.selected != null}">
+                                     rendered="#{projectViewManager.selected != null}">
 
                             <h:outputText value="#{bundle.ViewProjectLabel_name}"/>
-                            <h:outputText value="#{projectController.selected.name}" />
+                            <h:outputText value="#{projectViewManager.selected.name}" />
 
                             <h:outputText value="#{bundle.ViewProjectLabel_rss}"/>
-                            <p:link href="webresources/rss?key=#{projectController.selected.rssKey}" target="_blank" class="dataFields">
+                            <p:link href="webresources/rss?key=#{projectViewManager.selected.rssKey}" target="_blank" class="dataFields">
                                 <i class="fa fa-rss">&nbsp;</i>
                             </p:link>
 
@@ -77,7 +77,7 @@
                 </p:fieldset>
             </h:form>
             <c:if test="#{accountManager.isLoggedIn()}">
-                <p:socket onMessage="handleMessage" channel="/#{projectController.selected.name}/#{accountManager.selected.username}"/>
+                <p:socket onMessage="handleMessage" channel="/#{projectViewManager.selected.name}/#{accountManager.selected.username}"/>
             </c:if>
         </ui:define>
     </ui:composition>

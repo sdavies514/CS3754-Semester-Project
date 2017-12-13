@@ -52,11 +52,6 @@ public class ProjectViewManager implements Serializable {
         return "ViewProject.xhtml?faces-redirect=true";
     }
     
-    public String showProjectChat(Project proj) {
-        this.selected = proj;
-        return "Chat.xhtml?faces-redirect=true";
-    }
-    
     public String showProjectTimeline(Project proj) {
         this.selected = proj;
         return "Timeline.xhtml?faces-redirect=true";
