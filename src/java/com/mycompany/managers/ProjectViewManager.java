@@ -64,6 +64,6 @@ public class ProjectViewManager implements Serializable {
     
     public String showProjectCalendar(Project proj) {
         this.selected = proj;
-        return "Calendar.xhtml?faces-redirect=true";
+        return "MilestoneCalendar.xhtml?faces-redirect=true";
     }
 }
