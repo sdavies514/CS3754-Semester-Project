@@ -143,6 +143,11 @@ public class User implements Serializable {
     @Size(min = 1, max = 128)
     @Column(name = "email")
     private String email;
+    
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "google_image_url")
+    private String googleImageUrl;
 
     @OneToMany(mappedBy = "userId")
     private Collection<UserPhoto> userPhotoCollection;
@@ -295,6 +300,15 @@ public class User implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getGoogleImageUrl() {
+        return googleImageUrl;
+    }
+
+    public void setGoogleImageUrl(String googleImageUrl) {
+        this.googleImageUrl = googleImageUrl;
+    }
+    
 
     // The @XmlTransient annotation is used to resolve potential name collisions
     // between a JavaBean property name and a field name.

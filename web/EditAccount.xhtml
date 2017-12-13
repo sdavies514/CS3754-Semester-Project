@@ -103,6 +103,10 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                         <h:outputText value="#{bundle.ViewUserLabel_username}" />
                         <h:outputText value="#{accountManager.selected.username}" />
 
+                        <!--
+                        Disables the user's ability to change their password if they
+                        logged in using Google as all account changes must be handled by Google
+                        -->
                         <c:if test="#{accountManager.isGoogleAccount() == false}">
                         <h:outputLabel value="" />
                         <h:outputLabel value="Fill in Only to Change Password" styleClass="alertUser"/>

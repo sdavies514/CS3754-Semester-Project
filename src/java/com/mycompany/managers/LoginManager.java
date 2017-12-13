@@ -7,6 +7,7 @@ package com.mycompany.managers;
 import com.mycompany.EntityBeans.User;
 import com.mycompany.FacadeBeans.UserFacade;
 import com.mycompany.controllers.util.PasswordUtil;
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import javax.ejb.EJB;
@@ -44,7 +45,7 @@ public class LoginManager implements Serializable {
      */
     @EJB
     private UserFacade userFacade;
-    
+
     @Inject
     private AccountManager accountManager;
 
@@ -65,7 +66,7 @@ public class LoginManager implements Serializable {
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     public String getGoogleUsername() {
         return googleUsername;
     }
@@ -106,7 +107,7 @@ public class LoginManager implements Serializable {
     public void setGoogleId(String googleId) {
         this.googleId = googleId;
     }
-    
+
     public String getPassword() {
         return password;
     }
@@ -183,21 +184,28 @@ public class LoginManager implements Serializable {
             // Initialize the session map with user properties of interest
             initializeSessionMap(user);
             FacesContext.getCurrentInstance().getExternalContext().
-                getSessionMap().put("isGoogleAccount", false);
+                    getSessionMap().put("isGoogleAccount", false);
 
             // Redirect to show the Profile page
             return "Profile.xhtml?faces-redirect=true";
         }
     }
-    
+
+    /**
+     * Logs the user into the application much like the loginUser() method above.
+     * The main difference between the two methods is this method will create a 
+     * new user if the user has not loged into the application before.
+     * This allows for a seamless experience for Google users as they are not forced
+     * to fill out repetitive information during the account creation process.
+     * @return
+     * @throws NoSuchAlgorithmException 
+     */
     public String signedInWithGoogle() throws NoSuchAlgorithmException {
-        System.out.println(googleUsername);
-        
+
         // Obtain the object reference of the User object from the entered username
         User user = getUserFacade().findByUsername(getGoogleUsername());
 
         if (user == null) {
-            System.out.println("Login: " + googleUsername);
             accountManager.setFirstName(googleFirstName);
             accountManager.setLastName(googleLastName);
             accountManager.setUsername(googleUsername);
@@ -209,7 +217,8 @@ public class LoginManager implements Serializable {
             accountManager.setSecurityQuestion(0);
             accountManager.setSecurityAnswer("Google account, please update!");
             accountManager.setPassword("Google account, please update!");
-            
+            accountManager.setGoogleImageUrl(googleImageUrl);
+
             accountManager.createAccount();
 
         } else {
@@ -217,16 +226,30 @@ public class LoginManager implements Serializable {
 
             // Initialize the session map with user properties of interest
             initializeSessionMap(user);
-            
+
             FacesContext.getCurrentInstance().getExternalContext().
-                getSessionMap().put("isGoogleAccount", true);
+                    getSessionMap().put("isGoogleAccount", true);
             // Redirect to show the Profile page
             return "Profile.xhtml?faces-redirect=true";
         }
-        
 
         // Redirect to show the Profile page
         return "Profile.xhtml?faces-redirect=true";
+    }
+
+    /**
+     * Invalidates user session if there is a user currently logged in and redirects 
+     * them to the home page.  Used by Primefaces IdleMonitor to log the user out
+     * after 1 hour of inactivity as per project specification.
+     * @throws IOException 
+     */
+    public void timeout() throws IOException {
+        if (accountManager.isLoggedIn()) {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .invalidateSession();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("index.xhtml");
+        }
     }
 
     /*

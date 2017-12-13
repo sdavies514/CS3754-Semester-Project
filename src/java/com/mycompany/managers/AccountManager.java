@@ -237,6 +237,7 @@ public class AccountManager implements Serializable {
     }
 
     public String getGoogleImageUrl() {
+        System.out.println("Image URL: " + googleImageUrl);
         return googleImageUrl;
     }
 
@@ -353,7 +354,12 @@ public class AccountManager implements Serializable {
     
     // Returns if the currently logged in account did so by using Google OAuth
     public boolean isGoogleAccount() {
-        return FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isGoogleAccount").equals(true);
+        if (password == null) {
+            return true;
+        } else {
+            return password.equals("Google account, please update!");
+        }
+//return FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isGoogleAccount").equals(true);
     }
 
     /*
@@ -401,6 +407,7 @@ public class AccountManager implements Serializable {
                 newUser.setEmail(email);
                 newUser.setUsername(username);
                 newUser.setHashedPassword(PasswordUtil.hashpw(password));
+                newUser.setGoogleImageUrl(googleImageUrl);
 
                 getUserFacade().create(newUser);
 
@@ -755,8 +762,6 @@ public class AccountManager implements Serializable {
         // Obtain the object reference of the signed-in user
         User signedInUser = getUserFacade().findByUsername(usernameOfSignedInUser);
         
-        System.out.println(usernameOfSignedInUser);
-
         // Obtain the id (primary key in the database) of the signedInUser object
         Integer userId = signedInUser.getId();
 
