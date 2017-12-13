@@ -385,6 +385,10 @@ public class AccountManager implements Serializable {
                 newUser.setSecurityAnswer(securityAnswer);
                 newUser.setEmail(email);
                 newUser.setUsername(username);
+
+                // When creating a new user, we must hash the cleartext password
+                // and persist the hash in the database instead of the cleartext
+                // password.
                 newUser.setHashedPassword(PasswordUtil.hashpw(password));
 
                 getUserFacade().create(newUser);
@@ -459,7 +463,11 @@ public class AccountManager implements Serializable {
                 if (new_Password == null || new_Password.isEmpty()) {
                     // Do nothing. The user does not want to change the password.
                 } else {
+                    // When changing a user's password, we must hash the new
+                    // cleartext password and persist the hash in the database
+                    // instead of the cleartext password.
                     editUser.setHashedPassword(PasswordUtil.hashpw(new_Password));
+
                     // Password changed successfully!
                     // Password was first validated by invoking the validatePasswordChange method below.
                 }
@@ -666,14 +674,18 @@ public class AccountManager implements Serializable {
                 == null ? "" : uiInputConfirmPassword.getLocalValue().toString();
 
         if (entered_password.isEmpty() || entered_confirm_password.isEmpty()) {
-            // Do not take any action.
-            // The required="true" in the XHTML file will catch this and produce an error message.
+            // If the user didn't enter one or both of the password fields, we
+            // don't need to take any action because the required="true" in the
+            // XHTML file will catch this and produce an error message.
             return;
         }
 
         // No need to hash these since we're not authenticating the user, just
         // verifying that they entered the same password twice.
         if (!entered_password.equals(entered_confirm_password)) {
+            // If the user entered two different passwords then we set an error
+            // message in order to indicate that the password validation has
+            // failed.
             statusMessage = "Password and Confirm Password must match!";
         } else {
             // Obtain the logged-in User's username
@@ -683,10 +695,24 @@ public class AccountManager implements Serializable {
             // Obtain the object reference of the signed-in User object
             User user = getUserFacade().findByUsername(user_name);
 
+            // When authenticating a user to change their password, we must take
+            // the cleartext user password the user entered and compare it
+            // against the password that's stored in the database for that user.
+            // Since we're storing the hashed password in the database, we must
+            // salt the cleartext password with the same salt as the password
+            // stored in the database and hash it then compare the two hashes.
+            // This is all encapsulated within a single call to checkpw, and we
+            // only need to pass the cleartext password and the hashed password
+            // since the hashed password is stored in Modular Crypt Format which
+            // means it includes the cost parameter and salt that was used to
+            // hash it.
             if (PasswordUtil.checkpw(entered_password, user.getHashedPassword())) {
                 // entered password = signed-in user's password
                 statusMessage = "";
             } else {
+                // If the user entered the wrong password, then we must set an
+                // error message in order to indicate that the password
+                // validation has failed.
                 statusMessage = "Incorrect Password!";
             }
         }

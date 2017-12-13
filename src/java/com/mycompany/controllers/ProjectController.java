@@ -89,6 +89,10 @@ public class ProjectController implements Serializable {
         // When creating a new project, we must hash the cleartext password and
         // persist the hash in the database instead of the cleartext password.
         selected.setHashedPassword(PasswordUtil.hashpw(cleartextPassword));
+
+        // Once we've hashed the cleartext password, we want to keep it from
+        // leaking into other code that uses this controller in the future, and
+        // we don't need it anymore so we can clear it.
         cleartextPassword = null;
 
         // we also derive a key from the password that identifies this project
@@ -206,36 +210,107 @@ public class ProjectController implements Serializable {
 
     public boolean joinProject(User currentUser) {
         if (cleartextPassword == null) {
+            // A correct project password is required to join a project, so we
+            // show an error message if no password is supplied.
             JsfUtil.addErrorMessage("Password was blank");
+
+            // Return false to indicate that a project wasn't joined.
             return false;
         }
         if (currentUser == null) {
             JsfUtil.addErrorMessage("Not logged in");
+            // A user must be logged in in order to join a project, so we show
+            // an error message if no user is logged in, regardless of whether
+            // the project password was correct or not. Since we don't want the
+            // cleartext password the user entered to leak into other code that
+            // uses this controller, and we don't need it anymore, we can clear
+            // it.
             cleartextPassword = null;
+
+            // Return false to indicate that a project wasn't joined.
             return false;
         }
         if (userProjFacade.associationAlreadyExists(currentUser, selected)) {
             JsfUtil.addErrorMessage("You already joined the project");
+            // A user may not join a project they have already joined, so we
+            // show an error message if the user has already joined the project,
+            // regardless of whether the project password was correct or not.
+            // Since we don't want the cleartext password the user entered to
+            // leak into other code that uses this controller, and we don't need
+            // it anymore, we can clear it.
             cleartextPassword = null;
+
+            // Return false to indicate that a project wasn't joined.
             return false;
         }
         try {
+            // When joining a project, we must take the cleartext project
+            // password the user entered and compare it against the password
+            // that's stored in the database for that project. Since we're
+            // storing the hashed password in the database, we must salt the
+            // cleartext password with the same salt as the password stored in
+            // the database and hash it then compare the two hashes. This is all
+            // encapsulated within a single call to checkpw, and we only need to
+            // pass the cleartext password and the hashed password since the
+            // hashed password is stored in Modular Crypt Format which means it
+            // includes the cost parameter and salt that was used to hash it.
             if (PasswordUtil.checkpw(cleartextPassword, selected.getHashedPassword())) {
+
+                // Once we've checked the cleartext password, we want to keep it
+                // from leaking into other code that uses this controller in the
+                // future, and we don't need it anymore so we can clear it.
                 cleartextPassword = null;
+
+                // In order to join the user to the project, we must create a
+                // new UserProjectAssociation since user-project is a
+                // many-to-many relationship (many users can join a particular
+                // project and a particular user can join many projects).
                 Project currentProj = selected;
                 UserProjectAssociation create = new UserProjectAssociation();
                 create.setProjectId(currentProj);
                 create.setUserId(currentUser);
+
+                // In order to record the UserProjectAssociation in the
+                // database, we must pass it to the create method of the
+                // UserProjectAssociationFacade, which handles inserting it into
+                // the database for us.
                 userProjFacade.create(create);
+
+                // The cleartext password matches the hashed password, so show a
+                // message to the user indicating that they have successfully
+                // joined the project.
                 JsfUtil.addSuccessMessage("Sucessfully joined project");
+
+                // Return true to indicate that the user was added to the
+                // project.
                 return true;
             } else {
+                // The cleartext password doesn't match the hashed project
+                // password, so show a message to the user indicating as much.
                 JsfUtil.addErrorMessage("Incorrect Password");
+
+                // In this case, We clearly don't want to join the user to the
+                // project. Even though the cleartext password is incorrect, we
+                // still want to keep it from leaking into other code that uses
+                // this controller in the future, and we don't need it anymore
+                // so we can clear it.
+                cleartextPassword = null;
+
+                // Return false to indicate that a project wasn't joined.
+                return false;
             }
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // We only reach here if some exception occurred in the code above, and
+        // we clearly don't want to join the user to a project in that case.
+        // We still want to keep the cleartext password from leaking into other
+        // code that uses this controller in the future, and we don't need it
+        // anymore so we can clear it.
         cleartextPassword = null;
+
+        // Return false to indicate that a project wasn't joined.
         return false;
     }
 }
