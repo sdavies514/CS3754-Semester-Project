@@ -246,7 +246,9 @@ Create Table Milestone
 (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
     start_date DATETIME NOT NULL,
-    end_date DATETIME,
+    completed_date DATETIME,
+    due_date DATETIME,
+    description VARCHAR (256) NOT NULL,
     project_id INT UNSIGNED,
     FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
 );
@@ -257,14 +259,13 @@ CREATE TRIGGER `milestone_after_insert` AFTER INSERT
 	FOR EACH ROW BEGIN
                 -- In an INSERT trigger, only NEW.col_name can be used
                 SELECT DATE_FORMAT(NEW.start_date, '%d %m %Y') INTO @start_date;
-                SELECT DATE_FORMAT(NEW.end_date, '%d %m %Y') INTO @end_date;
 		INSERT INTO `Activity` (
 			type,
 			message,
 			project_id
 		) VALUES (
 			'INSERT_MILESTONE',
-			concat('Created milestone between ', @start_date, ' and ', @end_date),
+			concat('Created milestone at ', @start_date, ': ', NEW.description),
 			NEW.project_id
 		);
     END$$
@@ -276,14 +277,13 @@ CREATE TRIGGER `milestone_after_update` AFTER UPDATE
 	FOR EACH ROW BEGIN
                 -- In a UPDATE trigger, you can use OLD.col_name to refer to the columns of a row before it is updated and NEW.col_name to refer to the columns of the row after it is updated.
                 SELECT DATE_FORMAT(NEW.start_date, '%d %m %Y') INTO @start_date;
-                SELECT DATE_FORMAT(NEW.end_date, '%d %m %Y') INTO @end_date;
 		INSERT INTO `Activity` (
 			type,
 			message,
 			project_id
 		) VALUES (
 			'UPDATE_MILESTONE',
-			concat('Updated milestone between ', @start_date, ' and ', @end_date),
+			concat('Updated milestone: ', NEW.description),
 			NEW.project_id
 		);
     END$$
@@ -294,15 +294,13 @@ CREATE TRIGGER `milestone_after_delete` AFTER DELETE
 	ON `Milestone`
 	FOR EACH ROW BEGIN
                 -- In a DELETE trigger, only OLD.col_name can be used; there is no new row.
-                SELECT DATE_FORMAT(OLD.start_date, '%d %m %Y') INTO @start_date;
-                SELECT DATE_FORMAT(OLD.end_date, '%d %m %Y') INTO @end_date;
 		INSERT INTO `Activity` (
 			type,
 			message,
 			project_id
 		) VALUES (
 			'DELETE_MILESTONE',
-			concat('Deleted milestone between ', @start_date, ' and ', @end_date),
+			concat('Deleted milestone: ', OLD.description),
 			OLD.project_id
 		);
     END$$

@@ -5,6 +5,8 @@
 package com.mycompany.FacadeBeans;
 
 import com.mycompany.EntityBeans.Milestone;
+import com.mycompany.EntityBeans.Project;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +28,12 @@ public class MilestoneFacade extends AbstractFacade<Milestone> {
 
     public MilestoneFacade() {
         super(Milestone.class);
+    }
+    
+    public List<Milestone> getAllForProject(Project p){
+        return (List<Milestone>) em.createQuery("SELECT c FROM Milestone c WHERE c.projectId = :project")
+                .setParameter("project", p)
+                .getResultList();
     }
     
 }

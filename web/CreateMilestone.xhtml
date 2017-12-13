@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="MilestoneCreateDlg" widgetVar="MilestoneCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateMilestoneTitle}">
+            <h:form id="MilestoneCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{milestoneController.selected != null}">
+                        <p:outputLabel value="Description: " for="description" />
+                        <p:inputText id="description" value="#{milestoneController.selected.description}" title="Description: " required="true" requiredMessage="#{bundle.CreateMilestoneRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.CreateMilestoneLabel_startDate}" for="startDate" />
+                        <p:calendar id="startDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{milestoneController.selected.startDate}" title="#{bundle.EditMilestoneTitle_startDate}" required="true" requiredMessage="#{bundle.EditMilestoneRequiredMessage_startDate}" showOn="button"/>
+                        <p:outputLabel value="Due Date: " for="dueDate" />
+                        <p:calendar id="dueDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{milestoneController.selected.dueDate}" title="Due Date: "  showOn="button"/>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{milestoneController.create(projectController.selected)}" value="#{bundle.Save}" update="display,:MilestoneListForm:datalist,:growl" oncomplete="PF('MilestoneCreateDialog').hide();"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF('MilestoneCreateDialog').hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

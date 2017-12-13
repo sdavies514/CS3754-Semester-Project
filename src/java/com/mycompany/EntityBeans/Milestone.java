@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -33,7 +34,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Milestone.findAll", query = "SELECT m FROM Milestone m")
     , @NamedQuery(name = "Milestone.findById", query = "SELECT m FROM Milestone m WHERE m.id = :id")
     , @NamedQuery(name = "Milestone.findByStartDate", query = "SELECT m FROM Milestone m WHERE m.startDate = :startDate")
-    , @NamedQuery(name = "Milestone.findByEndDate", query = "SELECT m FROM Milestone m WHERE m.endDate = :endDate")})
+    , @NamedQuery(name = "Milestone.findByCompletedDate", query = "SELECT m FROM Milestone m WHERE m.completedDate = :completedDate")
+    , @NamedQuery(name = "Milestone.description", query = "SELECT m FROM Milestone m WHERE m.description = :description")
+    , @NamedQuery(name = "Milestone.findByDueDate", query = "SELECT m FROM Milestone m WHERE m.dueDate = :dueDate")})
 public class Milestone implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,9 +50,17 @@ public class Milestone implements Serializable {
     @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
-    @Column(name = "end_date")
+    @Column(name = "due_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate;
+    private Date dueDate;
+    @Column(name = "completed_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date completedDate;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 256)
+    @Column(name = "description")
+    private String description;
     @JoinColumn(name = "project_id", referencedColumnName = "id")
     @ManyToOne
     private Project projectId;
@@ -82,12 +93,28 @@ public class Milestone implements Serializable {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public Date getDueDate() {
+        return dueDate;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Date getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(Date completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Project getProjectId() {
@@ -122,5 +149,5 @@ public class Milestone implements Serializable {
     public String toString() {
         return "com.mycompany.EntityBeans.Milestone[ id=" + id + " ]";
     }
-    
+
 }
