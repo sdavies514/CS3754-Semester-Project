@@ -17,7 +17,7 @@
             <p:growl id="growl" life="4000" />
             <h:form id="MilestoneListForm">
                 <p:panel header="#{bundle.ListMilestoneTitle}">
-                    <p:dataTable id="datalist" value="#{milestoneController.projectMilestones(projectController.selected)}" var="item"
+                    <p:dataTable id="datalist" value="#{milestoneController.projectMilestones(projectViewManager.selected)}" var="item"
                                  selectionMode="single" selection="#{milestoneController.selected}"
                                  paginator="true"
                                  rowKey="#{item.id}"

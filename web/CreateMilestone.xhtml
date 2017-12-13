@@ -19,7 +19,7 @@
                         <p:outputLabel value="Due Date: " for="dueDate" />
                         <p:calendar id="dueDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{milestoneController.selected.dueDate}" title="Due Date: "  showOn="button"/>
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{milestoneController.create(projectController.selected)}" value="#{bundle.Save}" update="display,:MilestoneListForm:datalist,:growl" oncomplete="PF('MilestoneCreateDialog').hide();"/>
+                    <p:commandButton actionListener="#{milestoneController.create(projectViewManager.selected)}" value="#{bundle.Save}" update="display,:MilestoneListForm:datalist,:growl" oncomplete="PF('MilestoneCreateDialog').hide();"/>
                     <p:commandButton value="#{bundle.Cancel}" onclick="PF('MilestoneCreateDialog').hide()"/>
                 </h:panelGroup>
             </h:form>
