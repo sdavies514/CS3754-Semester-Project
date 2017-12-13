@@ -145,7 +145,7 @@ public class UserFileController implements Serializable {
              */
             for (int i = 0; i < items.size(); i++) {
 
-                // Obtain the filename stored in ThoughtwareStorage/FileStorage as 'userId_filename'
+                // Obtain the filename stored in Team7-FileStorage/UserFiles as 'userId_filename'
                 String storedFileName = items.get(i).getFilename();
 
                 // Remove the "userId_" (e.g., "4_") prefix in the stored filename
@@ -377,7 +377,7 @@ public class UserFileController implements Serializable {
             case "PNG":
             case "GIF":
                 // File is an acceptable image type. Return the image file's relative path.
-                return Constants.FILES_RELATIVE_PATH + userFileName;
+                return Constants.USER_FILES_RELATIVE_PATH + userFileName;
             default:
                 /*
                 The file is not an image file. Return noPreviewImage.png, which is a
@@ -432,7 +432,7 @@ public class UserFileController implements Serializable {
     ====================================
      */
     public String selectedFileRelativePath() {
-        return Constants.FILES_RELATIVE_PATH + selected.getFilename();
+        return Constants.USER_FILES_RELATIVE_PATH + selected.getFilename();
     }
 
     /*

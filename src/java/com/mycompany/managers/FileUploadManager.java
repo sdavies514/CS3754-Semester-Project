@@ -262,7 +262,7 @@ public class FileUploadManager implements Serializable {
         inputStream.read(buffer);
 
         // Write the series of bytes on uploadedFile.
-        File targetFile = new File(Constants.FILES_ABSOLUTE_PATH, file_name);
+        File targetFile = new File(Constants.USER_FILES_ABSOLUTE_PATH, file_name);
 
         OutputStream outStream;
         outStream = new FileOutputStream(targetFile);
@@ -287,7 +287,7 @@ public class FileUploadManager implements Serializable {
 
     public String getFileLocation() {
 
-        return Constants.FILES_ABSOLUTE_PATH;
+        return Constants.USER_FILES_ABSOLUTE_PATH;
     }
 
     /**

@@ -162,7 +162,7 @@ public class UserFile implements Serializable {
     ===================================================
      */
     public String getFilePath() {
-        return Constants.FILES_ABSOLUTE_PATH + getFilename();
+        return Constants.USER_FILES_ABSOLUTE_PATH + getFilename();
     }
 
 }

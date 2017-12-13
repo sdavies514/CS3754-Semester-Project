@@ -331,7 +331,7 @@ public class AccountManager implements Serializable {
     public void setSelected(User selectedUser) {
         this.selected = selectedUser;
     }
-
+    
     /*
     ================
     Instance Methods
