@@ -86,7 +86,7 @@ public class ProjectController implements Serializable {
     }
 
     public void create() throws NoSuchAlgorithmException {
-        // when creating a new project, we must hash the cleartext password and
+        // When creating a new project, we must hash the cleartext password and
         // persist the hash in the database instead of the cleartext password.
         selected.setHashedPassword(PasswordUtil.hashpw(cleartextPassword));
         cleartextPassword = null;
@@ -221,13 +221,13 @@ public class ProjectController implements Serializable {
         }
         try {
             if (PasswordUtil.checkpw(cleartextPassword, selected.getHashedPassword())) {
+                cleartextPassword = null;
                 Project currentProj = selected;
                 UserProjectAssociation create = new UserProjectAssociation();
                 create.setProjectId(currentProj);
                 create.setUserId(currentUser);
                 userProjFacade.create(create);
                 JsfUtil.addSuccessMessage("Sucessfully joined project");
-                cleartextPassword = null;
                 return true;
             } else {
                 JsfUtil.addErrorMessage("Incorrect Password");
