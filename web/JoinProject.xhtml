@@ -13,7 +13,7 @@
                     <p:panelGrid columns="2" rendered="#{projectController.selected != null}">
 
                         <p:outputLabel value="Enter Password: " for="cleartextPassword" />
-                        <p:inputText id="cleartextPassword" value="#{projectController.cleartextPassword}"
+                        <p:password id="cleartextPassword" value="#{projectController.cleartextPassword}"
                                      title="#{bundle.JoinProjectTitle_cleartextPassword}" required="true"
                                      requiredMessage="#{bundle.JoinProjectRequiredMessage_cleartextPassword}"/>
 

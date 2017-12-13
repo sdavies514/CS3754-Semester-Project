@@ -17,7 +17,7 @@
                         <p:inputText id="name" value="#{projectController.selected.name}" title="#{bundle.CreateProjectTitle_name}" required="true" requiredMessage="#{bundle.CreateProjectRequiredMessage_name}"/>
 
                         <p:outputLabel value="#{bundle.CreateProjectLabel_cleartextPassword}" for="cleartextPassword" />
-                        <p:inputText id="cleartextPassword" value="#{projectController.cleartextPassword}"
+                        <p:password id="cleartextPassword" value="#{projectController.cleartextPassword}"
                                      title="#{bundle.CreateProjectTitle_cleartextPassword}" required="true"
                                      requiredMessage="#{bundle.CreateProjectRequiredMessage_cleartextPassword}"/>
 
