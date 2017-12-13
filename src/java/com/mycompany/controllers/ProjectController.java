@@ -215,7 +215,7 @@ public class ProjectController implements Serializable {
             return false;
         }
         if (userProjFacade.associationAlreadyExists(currentUser, selected)) {
-            JsfUtil.addErrorMessage("You already joined the group");
+            JsfUtil.addErrorMessage("You already joined the project");
             cleartextPassword = null;
             return false;
         }
