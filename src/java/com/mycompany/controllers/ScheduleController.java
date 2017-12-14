@@ -44,9 +44,11 @@ public class ScheduleController implements Serializable {
 
             @Override
             public void loadEvents(Date start, Date end) {
+                if(milestoneController == null || projectViewManager == null)
+                       return;
                 List<Milestone> mstones = getMilestoneController().projectMilestones(getProjectViewManager().getSelected());
                 for (Milestone m : mstones) {
-                    if (m.getCompletedDate() == null) {
+                    if (m != null && m.getCompletedDate() == null) {
                         addEvent(new DefaultScheduleEvent(m.getDescription(), m.getDueDate(), m.getDueDate()));
                     }
                 }
