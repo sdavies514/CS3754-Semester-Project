@@ -23,8 +23,8 @@ import org.mindrot.jbcrypt.BCrypt;
  * encrypted password on the system. Also note that this drawback don't apply to
  * password hashes, so encrypting password hashes can still gain some benefits
  * from encryption while not suffering the security issues, especially if the
- * web application (containing the encryption key) and database are on different
- * servers.
+ * cloud application (containing the encryption key) and database are on
+ * different servers.
  *
  * When hashing passwords, there are a couple further considerations. Not just
  * any old hashing scheme should be used. Many hash functions, such as SHA-1 for
