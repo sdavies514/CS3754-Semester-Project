@@ -50,6 +50,12 @@
                                     target="_blank" class="dataFields">
                                 <i class="fa fa-calendar">&nbsp;</i>
                             </p:link>
+
+                            <h:outputText value="Project Activity Heatmap" />
+                            <p:commandButton id="submit" value="Show Heatmap"
+                                             action="#{heatmapController.generate(projectViewManager.selected)}"
+                                             ajax="false" />
+
                         </p:panelGrid>
                     </h:panelGroup>
                     <br /><br />
