@@ -22,9 +22,9 @@ Copyright © 2017 Shane Davies. All rights reserved.
         <!-- Create the content for this page below -->
         <ui:define name="editableContent">
             <h:head>
-                <!-- Initializes the Google API JavaScript files in order to user OAuth --> 
-                <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
-                </script>
+                <!-- Initializes the Google API JavaScript files in order to user OAuth -->
+<!--                <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+                </script>-->
                 <script src="https://apis.google.com/js/client:platform.js?onload=start" async="defer">
                 </script>
                 <script>
@@ -115,7 +115,7 @@ Copyright © 2017 Shane Davies. All rights reserved.
                     </p:remoteCommand>
 
                     <!--
-                    Hidden fields that are used to transfer the information retrieved 
+                    Hidden fields that are used to transfer the information retrieved
                     from the JavaScript Google login to the Java Beans on the server-->
                     <h:inputHidden id="googleUsername" value="#{loginManager.googleUsername}"/>
                     <h:inputHidden id="googleFirstName" value="#{loginManager.googleFirstName}"/>
