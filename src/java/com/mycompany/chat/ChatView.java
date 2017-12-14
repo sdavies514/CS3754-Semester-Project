@@ -3,6 +3,7 @@ package com.mycompany.chat;
 import com.mycompany.EntityBeans.Message;
 import com.mycompany.controllers.ProjectController;
 import com.mycompany.managers.AccountManager;
+import com.mycompany.managers.ProjectViewManager;
 import java.io.Serializable;
 import java.util.Date;
 import javax.ejb.EJB;
@@ -26,6 +27,9 @@ public class ChatView implements Serializable {
 
     @ManagedProperty("#{projectController}")
     private ProjectController projectController;
+    
+        @ManagedProperty("#{projectViewManager}")
+    private ProjectViewManager projectViewManager;
 
     @EJB
     private com.mycompany.FacadeBeans.MessageFacade messageFacade;
@@ -44,17 +48,17 @@ public class ChatView implements Serializable {
     public void sendGlobal() {
         Message create = new Message();
         create.setMessageText(globalMessage);
-        create.setProjectId(projectController.getSelected());
+        create.setProjectId(projectViewManager.getSelected());
         create.setUserId(accountManager.getSelected());
         create.setTimestamp(new Date());
         getMessageFacade().create(create);
-        eventBus.publish("/" + projectController.getSelected().getName() + "/*", getAccountManager().getSelected().getUsername() + ": " + globalMessage);
+        eventBus.publish("/" + projectViewManager.getSelected().getName() + "/*", getAccountManager().getSelected().getUsername() + ": " + globalMessage);
         globalMessage = null;
     }
 
     public void disconnect() {
         //push leave information
-        eventBus.publish("/" + projectController.getSelected().getName() + "/*", getAccountManager().getSelected().getUsername() + " left the channel.");
+        eventBus.publish("/" + projectViewManager.getSelected().getName() + "/*", getAccountManager().getSelected().getUsername() + " left the channel.");
     }
 
     /**
@@ -111,5 +115,19 @@ public class ChatView implements Serializable {
      */
     public void setMessageFacade(com.mycompany.FacadeBeans.MessageFacade messageFacade) {
         this.messageFacade = messageFacade;
+    }
+
+    /**
+     * @return the projectViewManager
+     */
+    public ProjectViewManager getProjectViewManager() {
+        return projectViewManager;
+    }
+
+    /**
+     * @param projectViewManager the projectViewManager to set
+     */
+    public void setProjectViewManager(ProjectViewManager projectViewManager) {
+        this.projectViewManager = projectViewManager;
     }
 }

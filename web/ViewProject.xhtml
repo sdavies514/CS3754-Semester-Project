@@ -38,18 +38,25 @@
                                 RSS icon. -->
                                 <i class="fa fa-rss">&nbsp;</i>
                             </p:link>
-
+                            <h:outputText value="Milestone List" />
+                            <p:link href="ListMilestone.xhtml"
+                                    target="_blank" class="dataFields">
+                                <!-- Simply link the rss feed to the universal
+                                RSS icon. -->
+                                <i class="fa fa-list">&nbsp;</i>
+                            </p:link>
+                            <h:outputText value="Milestone Calendar" />
+                            <p:link href="MilestoneCalendar.xhtml"
+                                    target="_blank" class="dataFields">
+                                <!-- Simply link the rss feed to the universal
+                                RSS icon. -->
+                                <i class="fa fa-calendar">&nbsp;</i>
+                            </p:link>
                         </p:panelGrid>
                     </h:panelGroup>
                     <br /><br />
                 </div>
             </h:form>
-            <div align="center">
-                <a href="ListMilestone.xhtml">Milestone List</a>
-            </div>
-            <div align="center">
-                <a href="MilestoneCalendar.xhtml">Milestone Calendar</a>
-            </div>
             <script type="text/javascript">
                 function handleMessage(message) {
                     var chatContent = $(PrimeFaces.escapeClientId('form:public')),
@@ -65,6 +72,7 @@
                     }
                 }
             </script>
+            <div align="center">
             <h:form id="form">
                 <!--<p:remoteCommand name="updateList" update="users" process="@this" />-->
 
@@ -86,6 +94,7 @@
 
                 </p:fieldset>
             </h:form>
+            </div>
             <c:if test="#{accountManager.isLoggedIn()}">
                 <p:socket onMessage="handleMessage" channel="/#{projectViewManager.selected.name}/#{accountManager.selected.username}"/>
             </c:if>
