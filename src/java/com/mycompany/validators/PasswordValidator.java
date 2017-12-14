@@ -55,15 +55,13 @@ public class PasswordValidator implements Validator {
 
             ^                   start of regex
             (?=.{8,32})         minimum 8 and maximum 32 characters long
-            (?=.*[!@#$%^&*()])  contain at least one of the special characters
-                                above the numbers 1, 2, 3, ..., 9, 0 on the keyboard.
             (?=.*[A-Z])         contain at least one uppercase letter
             (?=.*[a-z])         contain at least one lowercase letter
             (?=.*[0-9])         contain at least one digit from 0 to 9.
             $                   end of regex
          */
         // REGular EXpression (regex) to validate the strength of enteredPassword
-        String regex = "^(?=.{8,32})(?=.*[!@#$%^&*()])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$";
+        String regex = "^(?=.{8,32})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$";
 
         if (!enteredPassword.matches(regex)) {
             throw new ValidatorException(new FacesMessage("The password must be minimum 8 and maximum 32 "

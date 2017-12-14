@@ -415,7 +415,7 @@ public class AccountManager implements Serializable {
                 } else {
                     newUser.setGoogleImageUrl("N/A");
                 }
-                
+
 
                 getUserFacade().create(newUser);
                 selected = newUser;
@@ -427,7 +427,7 @@ public class AccountManager implements Serializable {
             }
             // Initialize the session map for the newly created User object (see the method below)
             initializeSessionMap();
-            
+
             //Determines if the account is a google account and sets a session
             //map variable accordingly
             if (password.equals("Google account, please update!")) {
@@ -656,13 +656,11 @@ public class AccountManager implements Serializable {
             /*
             REGular EXpression (regex) for validating password strength:
             (?=.{8,31})        ==> Validate the password to be minimum 8 and maximum 31 characters long.
-            (?=.*[!@#$%^&*()]) ==> Validate the password to contain at least one special character.
-                                   (all special characters of the number keys from 1 to 0 on the keyboard)
             (?=.*[A-Z])        ==> Validate the password to contain at least one uppercase letter.
             (?=.*[a-z])        ==> Validate the password to contain at least one lowercase letter.
             (?=.*[0-9])        ==> Validate the password to contain at least one number from 0 to 9.
              */
-            String regex = "^(?=.{8,31})(?=.*[!@#$%^&*()])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$";
+            String regex = "^(?=.{8,31})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$";
 
             if (!new_Password.matches(regex)) {
                 statusMessage = "The password must be minimum 8 "
