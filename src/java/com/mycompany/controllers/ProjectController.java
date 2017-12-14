@@ -86,11 +86,11 @@ public class ProjectController implements Serializable {
     private ProjectFacade getFacade() {
         return ejbFacade;
     }
-    
+
     private UserFacade getUserFacade() {
         return userFacade;
     }
-    
+
     private UserProjectAssociationFacade getUserProjFacade() {
         return userProjFacade;
     }
@@ -134,7 +134,7 @@ public class ProjectController implements Serializable {
         }
         return items;
     }
-    
+
     public List<Project> getUserItems() {
         if (userItems == null) {
             // Obtain the signed-in user's username

@@ -54,9 +54,7 @@ public class ActivityFeed {
     }
 
     /**
-     * Retrieves representation of an instance of com.mycompany.rss.ActivityFeed
      *
-     * @return an instance of java.lang.String
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
@@ -92,15 +90,5 @@ public class ActivityFeed {
         feed.setLink(context.getAbsolutePath().toString());
         feed.setEntries(entries);
         return new SyndFeedOutput().outputString(feed);
-    }
-
-    /**
-     * PUT method for updating or creating an instance of ActivityFeed
-     *
-     * @param content representation for the resource
-     */
-    @PUT
-    @Consumes(MediaType.APPLICATION_XML)
-    public void putXml(String content) {
     }
 }
