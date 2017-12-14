@@ -327,12 +327,9 @@ public class AccountManager implements Serializable {
             in the initializeSessionMap() method below or in LoginManager.
              */
             int userPrimaryKey;
-            if (FacesContext.getCurrentInstance() == null
-                    || FacesContext.getCurrentInstance().getExternalContext() == null
-                    || FacesContext.getCurrentInstance().getExternalContext().getSessionMap() == null ||
-                    !FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("user_id")) {
-                userPrimaryKey = 6;
-            }
+            System.out.println(FacesContext.getCurrentInstance().
+                    getExternalContext().getSessionMap().get("user_id"));
+            
             userPrimaryKey = (int) FacesContext.getCurrentInstance().
                     getExternalContext().getSessionMap().get("user_id");
             /*
@@ -426,6 +423,7 @@ public class AccountManager implements Serializable {
 
                 getUserFacade().create(newUser);
                 selected = newUser;
+                System.out.println(selected);
 
             } catch (EJBException e) {
                 username = "";

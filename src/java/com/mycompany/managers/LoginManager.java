@@ -205,6 +205,7 @@ public class LoginManager implements Serializable {
         // Obtain the object reference of the User object from the entered username
         User user = getUserFacade().findByUsername(getGoogleUsername());
 
+        //System.out.println("goog: " + user.toString());
         if (user == null) {
             accountManager.setFirstName(googleFirstName);
             accountManager.setLastName(googleLastName);
@@ -220,7 +221,9 @@ public class LoginManager implements Serializable {
             accountManager.setGoogleImageUrl(googleImageUrl);
 
             accountManager.createAccount();
-
+            
+            User newUser = getUserFacade().findByUsername(getGoogleUsername());
+            initializeSessionMap(newUser);
         } else {
             errorMessage = "";
 
