@@ -112,11 +112,27 @@ public class ProjectController implements Serializable {
         cleartextPassword = null;
 
         // we also derive a key from the password that identifies this project
-        // for the purposes of adding some security to its rss feed. But we
-        // only want alphanumeric characters, so we remove any non-alphanumeric
-        // characters by replacing them with an empty string.
-        selected.setRssKey(PasswordUtil.hashpw(selected.getHashedPassword())
-                .replaceAll("[^A-Za-z0-9]", ""));
+        // for the purposes of adding some security to its rss feed.
+        String mcfHash = PasswordUtil.hashpw(selected.getHashedPassword());
+
+        // We don't need to ever verify this RSS hash against anything, so we
+        // can discard all the Modular Crypt Format metadata.
+        String[] splitMcfHash = mcfHash.split("$");
+        String payload = splitMcfHash[splitMcfHash.length - 1];
+
+        // For the same reason, we can also discard the first 22 characters,
+        // which contain the salt.
+        String hashOnly = payload.substring(22);
+
+        // The hash can still contain some non-alphanumeric characters, and for
+        // the sake of simplicity, we only want alphanumeric characters, so we
+        // remove any non-alphanumeric characters by replacing them with an
+        // empty string.
+        String alphaNumericHash = hashOnly.replaceAll("[^A-Za-z0-9]", "");
+
+        // Save the RSS hash to the project. This project's activity will now be
+        // accessible by providing this RSS hash to the RSS Feed web service.
+        selected.setRssKey(alphaNumericHash);
 
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("ProjectCreated"));
         if (!JsfUtil.isValidationFailed()) {
