@@ -326,11 +326,7 @@ public class AccountManager implements Serializable {
             user_id (database primary key) was put into the SessionMap
             in the initializeSessionMap() method below or in LoginManager.
              */
-            int userPrimaryKey;
-            System.out.println(FacesContext.getCurrentInstance().
-                    getExternalContext().getSessionMap().get("user_id"));
-            
-            userPrimaryKey = (int) FacesContext.getCurrentInstance().
+            int userPrimaryKey = (int) FacesContext.getCurrentInstance().
                     getExternalContext().getSessionMap().get("user_id");
             /*
             Given the primary key, obtain the object reference of the User
@@ -669,7 +665,7 @@ public class AccountManager implements Serializable {
 
             if (!new_Password.matches(regex)) {
                 statusMessage = "The password must be minimum 8 "
-                        + "characters long, contain at least one special character above the numbers on the keyboard, "
+                        + "characters long, "
                         + "contain at least one uppercase letter, "
                         + "contain at least one lowercase letter, "
                         + "and contain at least one number 0 to 9.";

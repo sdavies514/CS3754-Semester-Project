@@ -65,7 +65,7 @@ public class PasswordValidator implements Validator {
 
         if (!enteredPassword.matches(regex)) {
             throw new ValidatorException(new FacesMessage("The password must be minimum 8 and maximum 32 "
-                    + "characters long, contain at least one special character above the numbers on the keyboard, "
+                    + "characters long, "
                     + "contain at least one uppercase letter, "
                     + "contain at least one lowercase letter, "
                     + "and contain at least one digit 0 to 9."));
