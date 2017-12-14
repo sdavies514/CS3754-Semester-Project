@@ -75,6 +75,7 @@ Copyright © 2017 Shane Davies. All rights reserved.
                             sendGoogleInfo();
                             //Delays the redirect to the Profile.xhtml page by half
                             //a second to allow for the information to be sent to the server
+                            googleUser.disconnect()
                             setTimeout(function () {
                                 window.location.href = "http://localhost:8080/CS3754-Semester-Project/Profile.xhtml";
                             }, 500);

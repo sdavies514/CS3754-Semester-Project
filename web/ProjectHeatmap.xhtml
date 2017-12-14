@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created by Casey Butenhoff on 2017.11.18
+Copyright © 2017 Casey Butenhoff. All rights reserved.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Do not enter tags before the composition line since they are ignored by JSF -->
+
+    <!-- This page is constructed based on the siteTemplate -->
+    <ui:composition template="template/siteTemplate.xhtml">
+        <ui:define name="title">
+            <!-- Set the page title -->
+            <h:outputText value="Project Activity Heatmap"></h:outputText>
+        </ui:define>
+
+        <!-- Create the content for this page below -->
+        <ui:define name="editableContent">
+            <h:form>
+                <p:growl id="messages" showDetail="true" />
+
+                <div align="center">
+                    <h3>Project Activity Heatmap</h3>
+
+                    <!-- show a table of generated lottery numbers with data
+                    from the controller and a dynamic number of columns -->
+                    <p:dataTable value="#{heatmapController.heatmapTable.heatmapMaps}" var="heatmapMap"
+                                 styleClass="borderless headerless unpadded" tableStyle="width:auto">
+                        <p:columns value="#{heatmapController.heatmapTable.columns}" var="column">
+                            <h:outputText value="#{heatmapMap[column].value}" style="background-color: #{heatmapMap[column].color}" />
+                        </p:columns>
+                    </p:dataTable>
+                    <br /><br />
+
+                </div>
+            </h:form>
+            <style type="text/css">
+                .value {
+                    width: 1000px;
+                }
+            </style>
+        </ui:define>
+    </ui:composition>
+</html>

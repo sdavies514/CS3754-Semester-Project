@@ -57,7 +57,7 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                                     <c:forEach items="#{projectController.userItems}" var="proj">
                                         <p:submenu label="#{proj.name}">
                                             <p:menuitem value="Project Home" action="#{projectViewManager.showProjectHome(proj)}"  />
-                                            <p:menuitem value="Timeline" action="#{projectViewManager.showProjectTimeline(proj)}" />
+                                            <!--<p:menuitem value="Timeline" action="#{projectViewManager.showProjectTimeline(proj)}" />-->
                                             <p:menuitem value="Files" action="#{projectViewManager.showProjectFiles(proj)}" />
                                             <p:menuitem value="Calendar" action="#{projectViewManager.showProjectCalendar(proj)}" /> 
                                         </p:submenu>
