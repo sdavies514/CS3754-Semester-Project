@@ -326,14 +326,7 @@ public class AccountManager implements Serializable {
             user_id (database primary key) was put into the SessionMap
             in the initializeSessionMap() method below or in LoginManager.
              */
-            int userPrimaryKey;
-            if (FacesContext.getCurrentInstance() == null
-                    || FacesContext.getCurrentInstance().getExternalContext() == null
-                    || FacesContext.getCurrentInstance().getExternalContext().getSessionMap() == null ||
-                    !FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("user_id")) {
-                userPrimaryKey = 6;
-            }
-            userPrimaryKey = (int) FacesContext.getCurrentInstance().
+            int userPrimaryKey = (int) FacesContext.getCurrentInstance().
                     getExternalContext().getSessionMap().get("user_id");
             /*
             Given the primary key, obtain the object reference of the User
