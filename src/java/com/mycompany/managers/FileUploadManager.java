@@ -4,10 +4,13 @@
  */
 package com.mycompany.managers;
 
+import com.mycompany.EntityBeans.ProjectFile;
 import com.mycompany.EntityBeans.User;
 import com.mycompany.EntityBeans.UserFile;
+import com.mycompany.FacadeBeans.ProjectFileFacade;
 import com.mycompany.FacadeBeans.UserFacade;
 import com.mycompany.FacadeBeans.UserFileFacade;
+import com.mycompany.controllers.ProjectFileController;
 
 import com.mycompany.controllers.UserFileController;
 import javax.inject.Inject;
@@ -62,17 +65,34 @@ public class FileUploadManager implements Serializable {
      */
     @EJB
     private UserFileFacade userFileFacade;
+    
+    /*
+    The instance variable 'projectFileFacade' is annotated with the @EJB annotation.
+    The @EJB annotation directs the EJB Container (of the GlassFish AS) to inject (store) the object reference
+    of the ProjectFileFacade object, after it is instantiated at runtime, into the instance variable 'projectFileFacade'.
+     */
+    @EJB
+    private ProjectFileFacade projectFileFacade;
 
     /*
-    The instance variable 'userFileController' is annotated with the @Inject annotation.
-    The @Inject annotation directs the JavaServer Faces (JSF) CDI Container to inject (store) the object reference
-    of the UserFileController object, after it is instantiated at runtime, into the instance variable 'userFileController'.
+    Using the @Inject annotation, the compiler is directed to store the object reference of the
+    UserFileController/ProjectFileController/ProjectViewManager CDI-named beans into the instance variables
+    userFileController/projectFileController/ProjectViewManager at runtime.
+    With this injection, the instance variables and instance methods of the UserFileController/ProjectFileController/ProjectViewManager
+    classes can be accessed in this CDI-named bean. The following imports are required for the injection:
 
-    We can do this because we annotated the UserFileController class with @Named to indicate
-    that the CDI container will manage the objects instantiated from the UserFileController class.
+        import com.mycompany.controllers.UserFileController;
+        import com.mycompany.controllers.ProjectFileController;
+        import javax.inject.Inject;
      */
     @Inject
     private UserFileController userFileController;
+    
+    @Inject
+    private ProjectFileController projectFileController;
+    
+    @Inject
+    private ProjectViewManager projectViewManager;
 
     // Resulting FacesMessage produced
     FacesMessage resultMsg;
@@ -99,9 +119,21 @@ public class FileUploadManager implements Serializable {
     public UserFileFacade getUserFileFacade() {
         return userFileFacade;
     }
+    
+    public ProjectFileFacade getProjectFileFacade() {
+        return projectFileFacade;
+    }
 
     public UserFileController getUserFileController() {
         return userFileController;
+    }
+    
+    public ProjectFileController getProjectFileController() {
+        return projectFileController;
+    }
+    
+    public ProjectViewManager getProjectViewManager() {
+        return projectViewManager;
     }
 
     /*
@@ -184,11 +216,107 @@ public class FileUploadManager implements Serializable {
         }
 
     }
+    
+    public void handleProjectFileUpload(FileUploadEvent event) throws IOException {
 
-    // Show the File Upload Page
+        try {
+            /*
+            To associate the file to the project, record "projId_filename" in the database.
+            Since each file has its own primary key (unique id), the project members can upload
+            multiple files with the same name.
+             */
+            String projId_filename = projectViewManager.getSelected().getId() + "_" + event.getFile().getFileName();
+
+            /*
+            "The try-with-resources statement is a try statement that declares one or more resources.
+            A resource is an object that must be closed after the program is finished with it.
+            The try-with-resources statement ensures that each resource is closed at the end of the
+            statement." [Oracle]
+             */
+            try (InputStream inputStream = event.getFile().getInputstream();) {
+                // The method inputStreamToProjectFile given below writes the uploaded file into the Team7-FileStorage/ProjectFiles directory.
+                inputStreamToProjectFile(inputStream, projId_filename);
+                inputStream.close();
+            }
+            
+            File fp = new File(Constants.PROJECT_FILES_ABSOLUTE_PATH, projId_filename);
+            String file_size;
+            
+            /*
+            Calculate the size of the file in human readable format.  File uploads max at 10,000,000 bytes ~10MB,
+            so only KB / MB need be considered.
+            */
+            int resized = (int) fp.length();
+            if (resized < 1024) {
+                file_size = resized + " B";
+            }
+            else { 
+                if (resized / 1024 < 1024) { // Represents KB
+                    file_size = (resized / 1024) + " KB";
+                }
+                else {
+                    file_size = ((resized / 1024) / 1024) + " MB";
+                }
+            }
+
+            /*
+            Create a new ProjectFile object with attibutes: (See ProjectFile table definition inputStream DB)
+                <> id = auto generated as the unique Primary key for the project file object
+                <> file_location = projId_filename
+                <> project_id = project selected from tiered menu to navigate to this project's pages
+                <> file_size = a human readable string representation of the file size
+             */
+            ProjectFile newProjectFile = new ProjectFile(projId_filename, projectViewManager.getSelected(), file_size);
+
+            /*
+            ==============================================================
+            If the projId_filename was used before, delete the earlier file.
+            ==============================================================
+             */
+            List<ProjectFile> filesFound = getProjectFileFacade().findByFileLocation(projId_filename);
+
+            /*
+            If the projId_filename already exists in the database,
+            the filesFound List will not be empty.
+             */
+            if (!filesFound.isEmpty()) {
+
+                // Remove the file with the same name from the database
+                getProjectFileFacade().remove(filesFound.get(0));
+            }
+
+            //---------------------------------------------------------------
+            //
+            // Create the new ProjectFile entity (row) in the ThoughtwareDB
+            getProjectFileFacade().create(newProjectFile);
+
+            // This sets the necessary flag to ensure the messages are preserved.
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+
+            getProjectFileController().refreshFileList();
+
+            resultMsg = new FacesMessage("File(s) Uploaded Successfully!");
+            FacesContext.getCurrentInstance().addMessage(null, resultMsg);
+
+            // After successful upload, show the UserFiles.xhtml facelets page
+            FacesContext.getCurrentInstance().getExternalContext().redirect("ViewProjectFiles.xhtml");
+
+        } catch (IOException e) {
+            resultMsg = new FacesMessage("Something went wrong during file upload! See: " + e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, resultMsg);
+        }
+    }
+
+    // Show the User File Upload Page
     public String showFileUploadPage() {
 
         return "UploadFile?faces-redirect=true";
+    }
+    
+    // Show the Project File Upload Page
+    public String showProjectFileUploadPage() {
+
+        return "UploadProjectFile?faces-redirect=true";
     }
 
     public void upload() throws IOException {
@@ -263,6 +391,24 @@ public class FileUploadManager implements Serializable {
 
         // Write the series of bytes on uploadedFile.
         File targetFile = new File(Constants.USER_FILES_ABSOLUTE_PATH, file_name);
+
+        OutputStream outStream;
+        outStream = new FileOutputStream(targetFile);
+        outStream.write(buffer);
+        outStream.close();
+
+        return targetFile;
+    }
+    
+    private File inputStreamToProjectFile(InputStream inputStream, String file_name)
+            throws IOException {
+
+        // Read the series of bytes from the input stream
+        byte[] buffer = new byte[inputStream.available()];
+        inputStream.read(buffer);
+
+        // Write the series of bytes on uploadedFile.
+        File targetFile = new File(Constants.PROJECT_FILES_ABSOLUTE_PATH, file_name);
 
         OutputStream outStream;
         outStream = new FileOutputStream(targetFile);

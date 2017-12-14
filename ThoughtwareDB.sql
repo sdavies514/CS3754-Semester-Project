@@ -625,6 +625,7 @@ Create Table ProjectFile
 (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
     file_location VARCHAR (256) NOT NULL,
+    file_size VARCHAR (32) NOT NULL,
     project_id INT UNSIGNED,
     FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
 );

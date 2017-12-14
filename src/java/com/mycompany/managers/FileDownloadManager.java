@@ -4,10 +4,12 @@
  */
 package com.mycompany.managers;
 
-// UserFile class's instance methods are accessed
+// UserFile/ProjectFile class's instance methods are accessed
+import com.mycompany.EntityBeans.ProjectFile;
 import com.mycompany.EntityBeans.UserFile;
 
-// These two are needed for CDI @Inject injection
+// These three imports are needed for CDI @Inject injection
+import com.mycompany.controllers.ProjectFileController;
 import com.mycompany.controllers.UserFileController;
 import javax.inject.Inject;
 
@@ -41,15 +43,20 @@ public class FileDownloadManager implements Serializable {
 
     /*
     Using the @Inject annotation, the compiler is directed to store the object reference of the
-    UserFileController CDI-named bean into the instance variable userFileController at runtime.
-    With this injection, the instance variables and instance methods of the UserFileController
-    class can be accessed in this CDI-named bean. The following imports are required for the injection:
+    UserFileController/ProjectFileController CDI-named beans into the instance variables
+    userFileController/projectFileController at runtime.
+    With this injection, the instance variables and instance methods of the UserFileController/ProjectFileController
+    classes can be accessed in this CDI-named bean. The following imports are required for the injection:
 
-        import com.mycompany.jsfclasses.UserFileController;
+        import com.mycompany.controllers.UserFileController;
+        import com.mycompany.controllers.ProjectFileController;
         import javax.inject.Inject;
      */
     @Inject
     private UserFileController userFileController;
+    
+    @Inject
+    private ProjectFileController projectFileController;
 
     /*
     StreamedContent and DefaultStreamedContent classes are imported from
@@ -90,6 +97,34 @@ public class FileDownloadManager implements Serializable {
                 getContext()).getResourceAsStream(absolutePathOfFileToDownload);
 
         // Obtain the filename without the prefix "userId_" inserted to associate the file to a user
+        String downloadedFileName = nameOfFileToDownload.substring(nameOfFileToDownload.indexOf("_") + 1);
+
+        // FileInputStream must be used here since our files are stored in a directory external to our application
+        file = new DefaultStreamedContent(new FileInputStream(absolutePathOfFileToDownload), contentMimeType, downloadedFileName);
+
+        return file;
+    }
+    
+    public StreamedContent getProjectFile() throws FileNotFoundException {
+
+        ProjectFile fileToDownload = (ProjectFile) projectFileController.getSelectedNode().getData();
+
+        String nameOfFileToDownload = fileToDownload.getFilePath();
+        String absolutePathOfFileToDownload = fileToDownload.getFilePath();
+        String contentMimeType = FacesContext.getCurrentInstance().getExternalContext().getMimeType(absolutePathOfFileToDownload);
+
+        /*
+        System.out.println prints under the GlassFish tab of the Output window.
+        Print out intermediate values to effectively debug your application logic.
+
+        System.out.println("*** Name of the file to download = " + nameOfFileToDownload + " ***\n");
+        System.out.println("*** Path of the file to download = " + absolutePathOfFileToDownload + " ***\n");
+        System.out.println("*** MIME Type of the file to download = " + contentMimeType + " ***");
+         */
+        InputStream stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().
+                getContext()).getResourceAsStream(absolutePathOfFileToDownload);
+
+        // Obtain the filename without the prefix "projId_" inserted to associate the file to a project
         String downloadedFileName = nameOfFileToDownload.substring(nameOfFileToDownload.indexOf("_") + 1);
 
         // FileInputStream must be used here since our files are stored in a directory external to our application

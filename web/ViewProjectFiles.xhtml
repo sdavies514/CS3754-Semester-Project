@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created by Kyle Dyess on 2017.12.14 
+Copyright © 2017 Kyle Dyess. All rights reserved.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template/siteTemplate.xhtml">
+
+        <ui:define name="title">
+            <h:outputText value="#{projectViewManager.selected.name}'s Files"></h:outputText>
+        </ui:define>
+
+        <!-- Create the content for this page below -->
+        <ui:define name="editableContent">
+            <p:growl id="growl" life="5000" />
+            <h:form id="ProjectFilesForm">
+                <p:treeTable value="#{projectFileController.root}" var="projFile" 
+                             selectionMode="single" selection="#{projectFileController.selectedNode}"  >
+                    <f:facet name="header">
+                        #{projectViewManager.selected.name}'s Files
+                    </f:facet>
+                    <p:column headerText="File Name">
+                        <h:outputText value="#{projectFileController.cleanedFilenameForFileId(projFile.id)}" />
+                    </p:column>
+                    <p:column headerText="Size">
+                        <h:outputText value="#{projFile.fileSize}" />
+                    </p:column>
+                    
+                    <p:ajax event="select"   update="downloadButton deleteButton"/>
+                    <p:ajax event="unselect" update="downloadButton deleteButton"/>
+                    
+                    <f:facet name="footer">
+                    <!-- UPLOAD FILE button -->
+                    <p:commandButton id="uploadButton" value="Upload File" icon="ui-icon-arrowthick-1-n"
+                                     update=":growl :ProjectFilesForm" ajax="true"
+                                     styleClass="commandButton" action="UploadProjectFile" />
+                    
+                    <!-- DOWNLOAD FILE button -->
+                    <p:commandButton id="downloadButton" value="Download File" ajax="false"
+                                     icon="ui-icon-arrowthick-1-s"
+                                     styleClass="commandButton" disabled="#{empty projectFileController.selectedNode}" >
+
+                        <p:fileDownload value="#{fileDownloadManager.getProjectFile()}" />
+
+                    </p:commandButton>
+
+                    <!-- **********************************************
+                    Display a Confirmation dialog for the DELETE button
+                    *********************************************** -->
+
+                    <!-- DELETE FILE button -->
+                    <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Delete File"
+                                     styleClass="commandButton" actionListener="#{projectFileController.deleteSelectedProjectFile()}"
+                                     update=":growl :ProjectFilesForm" ajax="true"
+                                     disabled="#{empty projectFileController.selectedNode}">
+
+                        <p:confirm header="Confirmation"
+                                   message="Are you sure you want to permanently delete the selected file from the database?"
+                                   icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                    <p:confirmDialog id="confirmDialogBox" global="true" showEffect="fade" hideEffect="fade">
+                        <div align="center">
+                            <!-- The value of the first button listed below will be shown as
+                            highlighted (default action) when displayed -->
+                            <p:commandButton value="No" type="button"
+                                             styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            &nbsp;
+                            <p:commandButton value="Yes" type="button"
+                                             styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        </div>
+                    </p:confirmDialog>
+                    <!-- **********************************************
+                    End of Display of the DELETE Confirmation dialog
+                    *********************************************** -->
+                    </f:facet>
+                </p:treeTable>
+                
+                
+            </h:form>
+
+        </ui:define>
+    </ui:composition>
+
+</html>

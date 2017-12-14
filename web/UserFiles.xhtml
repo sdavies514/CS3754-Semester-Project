@@ -129,44 +129,7 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                                                  update=":growl :UserFileListForm" ajax="true"
                                                  styleClass="commandButton" action="UploadFile" />
 
-                                <!-- DOWNLOAD FILE button -->
-                                <p:commandButton id="downloadButton" value="Download File" ajax="false"
-                                                 icon="ui-icon-arrowthick-1-s"
-                                                 styleClass="commandButton" disabled="#{empty userFileController.selected}" >
-
-                                    <p:fileDownload value="#{fileDownloadManager.file}" />
-
-                                </p:commandButton>
-
-                                <!-- **********************************************
-                                Display a Confirmation dialog for the DELETE button
-                                *********************************************** -->
-
-                                <!-- DELETE FILE button -->
-                                <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Delete File"
-                                                 styleClass="commandButton" actionListener="#{userFileController.deleteSelectedUserFile()}"
-                                                 update=":growl :UserFileListForm" ajax="true"
-                                                 disabled="#{empty userFileController.selected}">
-
-                                    <p:confirm header="Confirmation"
-                                               message="Are you sure you want to permanently delete the selected file from the database?"
-                                               icon="ui-icon-alert" />
-                                </p:commandButton>
-
-                                <p:confirmDialog id="confirmDialogBox" global="true" showEffect="fade" hideEffect="fade">
-                                    <div align="center">
-                                        <!-- The value of the first button listed below will be shown as
-                                        highlighted (default action) when displayed -->
-                                        <p:commandButton value="No" type="button"
-                                                         styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                        &nbsp;
-                                        <p:commandButton value="Yes" type="button"
-                                                         styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                    </div>
-                                </p:confirmDialog>
-                                <!-- **********************************************
-                                End of Display of the DELETE Confirmation dialog
-                                *********************************************** -->
+                                
 
                                 <!-- DISPLAY FILE button -->
                                 <p:commandButton id="displayButton" value="Display File" action="DisplayFile"
