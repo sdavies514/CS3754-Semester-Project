@@ -664,7 +664,7 @@ public class AccountManager implements Serializable {
 
             if (!new_Password.matches(regex)) {
                 statusMessage = "The password must be minimum 8 "
-                        + "characters long, contain at least one special character above the numbers on the keyboard, "
+                        + "characters long, "
                         + "contain at least one uppercase letter, "
                         + "contain at least one lowercase letter, "
                         + "and contain at least one number 0 to 9.";
