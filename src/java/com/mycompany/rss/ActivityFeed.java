@@ -64,7 +64,13 @@ public class ActivityFeed {
             throws FeedException, NoSuchAlgorithmException {
         List entries = new ArrayList();
         Project project = projectFacade.findByRssKey(key);
+        String feedTitle = "Non-Project Activity";
+        String feedDescription =
+                "Activity outside of projects is not recorded.";
         if (project != null) {
+            feedTitle = project.getName() + " Project Activity";
+            feedDescription = "All activity that has occurred in the " +
+                project.getName() + "project since it was created.";
             for (Activity activity : activityFacade.findByProject(project)){
                 SyndContent description = new SyndContentImpl();
                 description.setType("text/plain");
@@ -72,7 +78,7 @@ public class ActivityFeed {
 
                 SyndEntry entry = new SyndEntryImpl();
                 entry.setTitle(activity.getType());
-                entry.setLink("http://wiki.java.net/bin/view/Javawsxml/rome01");
+                entry.setLink(context.getAbsolutePath().toString());
                 entry.setPublishedDate(activity.getTimestamp());
                 entry.setDescription(description);
                 entries.add(entry);
@@ -81,9 +87,9 @@ public class ActivityFeed {
 
         SyndFeed feed = new SyndFeedImpl();
         feed.setFeedType("rss_2.0");
-        feed.setTitle("test-title");
-        feed.setDescription("test-description");
-        feed.setLink("https://example.org");
+        feed.setTitle(feedTitle);
+        feed.setDescription(feedDescription);
+        feed.setLink(context.getAbsolutePath().toString());
         feed.setEntries(entries);
         return new SyndFeedOutput().outputString(feed);
     }
