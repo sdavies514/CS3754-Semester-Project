@@ -319,6 +319,12 @@ public class ProjectController implements Serializable {
                 // message to the user indicating that they have successfully
                 // joined the project.
                 JsfUtil.addSuccessMessage("Sucessfully joined project");
+                
+                /* Successfully added project to user.  Refresh userItems so
+                that headers will update appropriately.
+                */
+                userItems = null;
+                getUserItems();
 
                 // Return true to indicate that the user was added to the
                 // project.

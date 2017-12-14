@@ -18,7 +18,7 @@
                                      requiredMessage="#{bundle.JoinProjectRequiredMessage_cleartextPassword}"/>
 
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{projectController.joinProject(accountManager.selected)}" value="Join"
+                    <p:commandButton actionListener="#{projectController.joinProject(accountManager.selected)}" action="ListProject?faces-redirect=true" value="Join"
                                      update="display,:ProjectListForm:datalist,:growl" oncomplete="PF('ProjectJoinDialog').hide()"/>
                     <p:commandButton value="#{bundle.Cancel}" onclick="PF('ProjectJoinDialog').hide()"/>
                 </h:panelGroup>

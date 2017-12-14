@@ -54,7 +54,7 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                             
                             <c:if test="#{accountManager.isLoggedIn() == true}">
                                 <p:submenu label="My Projects" icon="ui-icon-bookmark">
-                                    <c:forEach items="#{projectController.getUserItems()}" var="proj">
+                                    <c:forEach items="#{projectController.userItems}" var="proj">
                                         <p:submenu label="#{proj.name}">
                                             <p:menuitem value="Project Home" action="#{projectViewManager.showProjectHome(proj)}"  />
                                             <p:menuitem value="Timeline" action="#{projectViewManager.showProjectTimeline(proj)}" />
