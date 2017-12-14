@@ -28,7 +28,14 @@
                             <h:outputText value="#{projectViewManager.selected.name}" />
 
                             <h:outputText value="#{bundle.ViewProjectLabel_rss}"/>
-                            <p:link href="webresources/rss?key=#{projectViewManager.selected.rssKey}" target="_blank" class="dataFields">
+
+                            <!-- Project RSS Feeds are accessible by providing
+                            their RSS key, which is generated once using a
+                            cryptographic hash when the project is created. -->
+                            <p:link href="webresources/rss?key=#{projectViewManager.selected.rssKey}"
+                                    target="_blank" class="dataFields">
+                                <!-- Simply link the rss feed to the universal
+                                RSS icon. -->
                                 <i class="fa fa-rss">&nbsp;</i>
                             </p:link>
 

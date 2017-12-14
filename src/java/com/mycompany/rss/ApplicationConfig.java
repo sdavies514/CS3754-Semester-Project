@@ -12,7 +12,28 @@ import javax.ws.rs.core.Application;
  *
  * @author CJ
  */
+
+/*
+Identifies the application path that serves as the base URI for all resource
+URIs provided by Path. We can't use the '/' path because that's already
+reserved for serving our actual web pages, so we must define a sub-path for
+web services. Basically, this means that all JAX-RS web services that our
+application exposes will be accessible at addressed of the form:
+
+  http://base_url/webresources/endpoint_address
+
+JAX-RS is nice to use in the Java EE environment because it requires no
+particular configuration and provides a simple annotation-based interface to
+deploy web services with.
+*/
 @ApplicationPath("webresources")
+
+/*
+@ApplicationPath requires that we subclass Application. This class defines a
+JAX-RS application, a Java API for RESTful Web Services which uses
+annotations to easily turn plain old Java objects (POJOs) into REST
+endpoints.
+*/
 public class ApplicationConfig extends Application {
 
     @Override
