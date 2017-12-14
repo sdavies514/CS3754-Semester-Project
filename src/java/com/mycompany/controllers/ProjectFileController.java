@@ -10,6 +10,7 @@ import com.mycompany.FacadeBeans.ProjectFileFacade;
 import com.mycompany.controllers.util.JsfUtil;
 import com.mycompany.controllers.util.JsfUtil.PersistAction;
 import com.mycompany.managers.Constants;
+import com.mycompany.managers.ProjectViewManager;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.enterprise.context.SessionScoped;
@@ -27,7 +29,10 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 /**
  *
@@ -57,6 +62,18 @@ public class ProjectFileController implements Serializable {
      */
     @EJB
     private ProjectFileFacade projectFileFacade;
+    
+    /*
+    Using the @Inject annotation, the compiler is directed to store the object reference of the
+    ProjectViewManager CDI-named bean into the instance variable
+    projectViewManager at runtime.  With this injection, the instance variables and instance methods of the 
+    ProjectViewManager class can be accessed in this CDI-named bean. The following imports are required for the injection:
+
+        import com.mycompany.managers.ProjectViewManager;
+        import javax.inject.Inject;
+     */
+    @Inject
+    private ProjectViewManager projectViewManager;
 
     // selected = Selected ProjectFile object
     private ProjectFile selected;
@@ -74,8 +91,8 @@ public class ProjectFileController implements Serializable {
     // Message to show when file type cannot be processed
     private String fileTypeMessage = "";
 
-    // Selected row number in p:dataTable in ProjectFiles.xhtml
-    private String selectedRowNumber = "0";
+    private TreeNode root;
+    private TreeNode selectedNode;
     
     /*
     ==================
@@ -105,13 +122,25 @@ public class ProjectFileController implements Serializable {
     public void setSelected(ProjectFile selected) {
         this.selected = selected;
     }
-
-    public String getSelectedRowNumber() {
-        return selectedRowNumber;
+    
+    public TreeNode getSelectedNode() {
+        return selectedNode;
     }
-
-    public void setSelectedRowNumber(String selectedRowNumber) {
-        this.selectedRowNumber = selectedRowNumber;
+    
+    public void setSelectedNode(TreeNode select) {
+        this.selectedNode = select;
+    }
+    
+    @PostConstruct
+    public void init() {
+        root = new DefaultTreeNode(new ProjectFile());
+        for(ProjectFile pfile: getItems(projectViewManager.getSelected().getId())) {
+            new DefaultTreeNode(pfile, root);
+        }
+    }
+    
+    public TreeNode getRoot() {
+        return root;
     }
 
     public String getFileTypeMessage() {
@@ -292,7 +321,7 @@ public class ProjectFileController implements Serializable {
      */
     public String deleteSelectedProjectFile() {
 
-        ProjectFile projectFileToDelete = selected;
+        ProjectFile projectFileToDelete = (ProjectFile) selectedNode.getData();
 
         FacesMessage resultMsg;
 
@@ -337,6 +366,7 @@ public class ProjectFileController implements Serializable {
         method above to retrieve all of the project's files again.
          */
         items = null;
+        init();
     }
     
     /*
@@ -344,7 +374,7 @@ public class ProjectFileController implements Serializable {
     Return Cleaned Filename given File Id
     =====================================
      */
-    // This method is called from ProjectFiles.xhtml by passing the fileId as a parameter.
+    // This method is called from ViewProjectFiles.xhtml by passing the fileId as a parameter.
     public String cleanedFilenameForFileId(Integer fileId) {
         /*
         cleanedFileNameHashMap<KEY, VALUE>
@@ -384,6 +414,6 @@ public class ProjectFileController implements Serializable {
     ====================================
      */
     public String selectedFileRelativePath() {
-        return Constants.USER_FILES_RELATIVE_PATH + selected.getFileLocation();
+        return Constants.PROJECT_FILES_RELATIVE_PATH + selected.getFileLocation();
     }
 }

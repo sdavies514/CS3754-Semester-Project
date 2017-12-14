@@ -60,6 +60,12 @@ public class ProjectFile implements Serializable {
     @Column(name = "file_location")
     private String fileLocation;
     
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 3, max = 32)
+    @Column(name = "file_size")
+    private String fileSize;
+    
     @JoinColumn(name = "project_id", referencedColumnName = "id")
     @ManyToOne
     private Project projectId;
@@ -77,14 +83,16 @@ public class ProjectFile implements Serializable {
         this.id = id;
     }
 
-    public ProjectFile(Integer id, String fileLocation) {
+    public ProjectFile(Integer id, String fileLocation, String fileSize) {
         this.id = id;
         this.fileLocation = fileLocation;
+        this.fileSize = fileSize;
     }
     
-    public ProjectFile(String fileLocation, Project id) {
+    public ProjectFile(String fileLocation, Project id, String fileSize) {
         this.fileLocation = fileLocation;
         this.projectId = id;
+        this.fileSize = fileSize;
     }
 
     /*
@@ -107,6 +115,14 @@ public class ProjectFile implements Serializable {
 
     public void setFileLocation(String fileLocation) {
         this.fileLocation = fileLocation;
+    }
+    
+    public String getFileSize() {
+        return fileSize;
+    }
+    
+    public void setFileSize(String sz) {
+        this.fileSize = sz;
     }
 
     public Project getProjectId() {
