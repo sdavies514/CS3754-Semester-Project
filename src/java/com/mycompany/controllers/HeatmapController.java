@@ -106,9 +106,9 @@ public class HeatmapController implements Serializable {
                 // activity and simply sum them together. A more sophisticated
                 // version of this algorithm might assign each entry a weight
                 // depending on its significance or some other property.
-                Integer count = activityCounter.containsKey(localDate) ?
-                        activityCounter.get(localDate) + 1 :
-                        1;
+                Integer count = activityCounter.containsKey(localDate)
+                        ? activityCounter.get(localDate) + 1
+                        : 1;
                 if (count > maxCount) {
                     maxCount = count;
                 }
@@ -224,9 +224,9 @@ public class HeatmapController implements Serializable {
                 // current day of our LocalDate loop. If there was no activity
                 // on a certain day, we still want to put a zero there to make
                 // it obvious that there was zero activity.
-                Integer count = activityCounter.containsKey(current) ?
-                        activityCounter.get(current) :
-                        0;
+                Integer count = activityCounter.containsKey(current)
+                        ? activityCounter.get(current)
+                        : 0;
 
                 // As mentioned before, we want to scale the magnitudes such
                 // that regardless of what they actually are, the day with the
