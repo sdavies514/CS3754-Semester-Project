@@ -8,8 +8,9 @@ import org.primefaces.push.Encoder;
  */
 public final class MessageEncoder implements Encoder<ChatMessage, String> {
  
-    //@Override
+    @Override
     public String encode(ChatMessage message) {
+        // Just encode the object to JSON.
         return new JSONObject(message).toString();
     }
 }

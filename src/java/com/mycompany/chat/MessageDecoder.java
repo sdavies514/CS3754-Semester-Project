@@ -7,9 +7,12 @@ import org.primefaces.push.Decoder;
  */
 public class MessageDecoder implements Decoder<String,ChatMessage> {
  
-    //@Override
+    @Override
     public ChatMessage decode(String s) {
         String[] userAndMessage = s.split(":");
+        // Sample message is "TJ: HI" or "HI"
+        // If there is a colon that means a user sent the message and we have to 
+        // decode it properly.
         if (userAndMessage.length >= 2) {
             return new ChatMessage().setUser(userAndMessage[0]).setText(userAndMessage[1]);
         } 

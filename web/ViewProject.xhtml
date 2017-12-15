@@ -61,43 +61,41 @@
                     <br /><br />
                 </div>
             </h:form>
+            <!-- This function takes the message that is sent from the 
+            prime faces push server and simply appends the message to the chat 
+            form element -->
             <script type="text/javascript">
                 function handleMessage(message) {
                     var chatContent = $(PrimeFaces.escapeClientId('form:public')),
                             text = (message.user) ? message.user + ':' + message.text : message.text;
-
                     chatContent.append(text + '<br />');
-
                     //keep scroll
                     chatContent.scrollTop(chatContent.height());
-
                     if (message.updateList) {
                         updateList();
                     }
                 }
             </script>
             <div align="center">
-            <h:form id="form">
-                <!--<p:remoteCommand name="updateList" update="users" process="@this" />-->
+                <h:form id="form">
+                    <p:fieldset id="container" legend="Group Chat" toggleable="true"  style="width:550px">
+                        <!--Only render the chat box if we are logged in--> 
+                        <h:panelGroup rendered="#{accountManager.isLoggedIn()}" >
+                            <h:panelGrid columns="1" columnClasses="publicColumn,usersColumn">
+                                <p:outputPanel style="height:300px; width:500px" id="public" layout="block" styleClass="ui-corner-all ui-widget-content chatlogs" />
+                            </h:panelGrid>
 
-                <p:fieldset id="container" legend="Group Chat" toggleable="true"  style="width:550px">
+                            <p:separator />
+                            <!--This is where the messages are populated-->
+                            <p:inputText value="#{chatView.globalMessage}" styleClass="messageInput" />
+                            <p:spacer width="5" />
+                            <p:commandButton value="Send" actionListener="#{chatView.sendGlobal}" oncomplete="$('.messageInput').val('').focus()" />
+                            <p:spacer width="5" />
+                            <p:commandButton value="Disconnect" actionListener="#{chatView.disconnect}" global="false" update="container" />
+                        </h:panelGroup>
 
-                    <h:panelGroup rendered="#{accountManager.isLoggedIn()}" >
-                        <h:panelGrid columns="1" columnClasses="publicColumn,usersColumn">
-                            <p:outputPanel style="height:300px; width:500px" id="public" layout="block" styleClass="ui-corner-all ui-widget-content chatlogs" />
-                        </h:panelGrid>
-
-                        <p:separator />
-
-                        <p:inputText value="#{chatView.globalMessage}" styleClass="messageInput" />
-                        <p:spacer width="5" />
-                        <p:commandButton value="Send" actionListener="#{chatView.sendGlobal}" oncomplete="$('.messageInput').val('').focus()" />
-                        <p:spacer width="5" />
-                        <p:commandButton value="Disconnect" actionListener="#{chatView.disconnect}" global="false" update="container" />
-                    </h:panelGroup>
-
-                </p:fieldset>
-            </h:form>
+                    </p:fieldset>
+                </h:form>
             </div>
             <c:if test="#{accountManager.isLoggedIn()}">
                 <p:socket onMessage="handleMessage" channel="/#{projectViewManager.selected.name}/#{accountManager.selected.username}"/>

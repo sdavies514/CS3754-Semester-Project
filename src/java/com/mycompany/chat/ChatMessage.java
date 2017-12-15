@@ -1,29 +1,39 @@
+/*
+ * Created by Thomas Corley on 2017.12.04  * 
+ * Copyright © 2017 Osman Balci. All rights reserved. * 
+ *
+ */
 package com.mycompany.chat;
- 
+
+/*
+ * The ChatMessage class is a simple wrapper class that stores the User and
+ * and the Message that is being sent. It gets encoded and decoded into/from
+ * JSON when interacting with the front end.
+ */       
 public class ChatMessage {
-     
+    
+    // Only two things we care about in a message
     private String text;
     private String user;
-    private boolean updateList;
  
     public ChatMessage() {
     }
  
+    // It is possible for a message to not have a username.
+    // For example when someone enters a room a message is sent announcing
+    // their presence.
     public ChatMessage(String text) {
         this.text = text;
     }
-     
-    public ChatMessage(String text, boolean updateList) {
-        this.text = text;
-        this.updateList = updateList;
-    }
  
-    public ChatMessage(String user, String text, boolean updateList) {
+    // When a user is sending a message to the chat this constructor will be 
+    // used.
+    public ChatMessage(String user, String text) {
         this.text = text;
         this.user = user;
-        this.updateList = updateList;
     }
-     
+    
+    // Getter and Setter methods for the fields.
     public String getText() {
         return text;
     }
@@ -40,13 +50,5 @@ public class ChatMessage {
     public ChatMessage setUser(String user) {
         this.user = user;
         return this;
-    }
- 
-    public boolean isUpdateList() {
-        return updateList;
-    }
- 
-    public void setUpdateList(boolean updateList) {
-        this.updateList = updateList;
     }
 }
