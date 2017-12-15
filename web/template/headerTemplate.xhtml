@@ -49,13 +49,28 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                     </td>
                     <td align="right" valign="middle">
                         
+                        <!-- Collect header site links into a PrimeFaces menubar. -->
                         <p:menubar style="width: 475px">
+                            <!-- Clicking "Home" displays the index.xhtml file -->
                             <p:menuitem value="Home" outcome="/index" styleClass="arialTen" icon="fa fa-home" />
                             
+                            <!-- Create My Projects dynamic menu for user if signed in -->
                             <c:if test="#{accountManager.isLoggedIn() == true}">
                                 <p:submenu label="My Projects" icon="ui-icon-bookmark">
+                                    
+                                    <!-- projectController.userItems holds a collection of Project objects
+                                            for which the Project object's corresponding UserProjectAssociations 
+                                            in ThoughtwareDB have a user_id corresponding to the signed in user.
+                                            projectController.userItems must be updated within ProjectController
+                                            whenever a Project is joined by the user. -->
                                     <c:forEach items="#{projectController.userItems}" var="proj">
+                                        <!-- Create a submenu in My Projects for each Project belonging to the user. -->
                                         <p:submenu label="#{proj.name}">
+                                            <!-- Clicking these menu items below each Project will redirect user to
+                                                    ViewProject.xhtml, ViewProjectFiles.xhtml, or MilestoneCalendar.xhtml.
+                                                    Notice that it is necessary to pass proj, the Project object reference,
+                                                    to the projectViewManager's corresponding redirect method, to update
+                                                    the actively 'selected' Project for site-wide use. -->
                                             <p:menuitem value="Project Home" action="#{projectViewManager.showProjectHome(proj)}"  />
                                             <!--<p:menuitem value="Timeline" action="#{projectViewManager.showProjectTimeline(proj)}" />-->
                                             <p:menuitem value="Files" action="#{projectViewManager.showProjectFiles(proj)}" />
@@ -64,19 +79,26 @@ Copyright © 2017 Casey Butenhoff. All rights reserved.
                                     </c:forEach>
                                 </p:submenu>
                                 
+                                <!-- Display "My Account" if a user is signed in; redirect to Profile.xhtml -->
                                 <p:menuitem value="My Account" outcome="/Profile" styleClass="arialTen" icon="fa fa-user" />
                                 
+                                <!-- Display "Projects" if a user is signed in; redirect to ListProject.xhtml
+                                        to display the list of all Projects (and ability to create/join Projects -->
                                 <p:menuitem value="Projects" outcome="/ListProject" styleClass="arialTen" icon="fa fa-tasks" />
                                 
+                                <!-- Display "Sign Out" if a user is signed in; call accountManager to logout -->
                                 <f:facet name="options">
                                     <p:commandButton value="Sign Out" action="#{accountManager.logout()}" 
                                                      styleClass="commandButton" icon="fa fa-sign-out" />
                                 </f:facet>
                             </c:if>
                             
+                            <!-- "Sign In" and "Create an Account" if no user is signed in -->
                             <c:if test="#{accountManager.isLoggedIn() == false}">
+                                <!-- Clicking "Sign In" displays the SignIn.xhtml file -->
                                 <p:menuitem value="Sign In" outcome="/SignIn" styleClass="arialTen" icon="fa fa-sign-in" />
                                 
+                                <!-- Clicking "My Account" displays the Profile.xhtml file -->
                                 <p:menuitem value="Create an Account" outcome="/CreateAccount" styleClass="arialTen" icon="fa fa-user-plus" />
                             </c:if>
                         </p:menubar>

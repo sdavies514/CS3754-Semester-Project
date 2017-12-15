@@ -18,6 +18,8 @@
                                      requiredMessage="#{bundle.JoinProjectRequiredMessage_cleartextPassword}"/>
 
                     </p:panelGrid>
+                    <!-- On Join, redirect to ListProject.xhtml to force refresh of the list of Projects
+                            associated with the signed in user to be displayed in the dynamic My Projects menu -->
                     <p:commandButton actionListener="#{projectController.joinProject(accountManager.selected)}" action="ListProject?faces-redirect=true" value="Join"
                                      update="display,:ProjectListForm:datalist,:growl" oncomplete="PF('ProjectJoinDialog').hide()"/>
                     <p:commandButton value="#{bundle.Cancel}" onclick="PF('ProjectJoinDialog').hide()"/>

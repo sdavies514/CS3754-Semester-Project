@@ -321,7 +321,7 @@ public class ProjectController implements Serializable {
                 JsfUtil.addSuccessMessage("Sucessfully joined project");
                 
                 /* Successfully added project to user.  Refresh userItems so
-                that headers will update appropriately.
+                that MyProject header menu will update appropriately.
                 */
                 userItems = null;
                 getUserItems();
