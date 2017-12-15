@@ -15,7 +15,6 @@ import org.primefaces.push.annotation.PathParam;
 import org.primefaces.push.annotation.PushEndpoint;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 
 /*
  * This is the endpoint class that the websocket will open.
@@ -62,7 +61,7 @@ public class ChatResource {
     }
     
     // onMessage is called both when a message is going to be sent and when
-    //it is going be recieved.
+    // it is going be recieved.
     // We do not need to modify the message in transit so we just return it 
     // without changing anything. However we do specify the encoder and decoders
     // for the class. We simply encode/decode the class to/from JSON.

@@ -18,31 +18,18 @@ Copyright © 2017 Shane Davies. All rights reserved.
             <!-- Set the page title -->
             <h:outputText value="Milestone Calendar"></h:outputText>
         </ui:define>
-
         <!-- Create the content for this page below -->
         <ui:define name="editableContent">
+            <!--The calendar is just a simple schedule element that we populate 
+            using the ScheduleController lazily-->
             <h:form>
-                <p:growl id="messages" showDetail="true" />
-
                 <div align="center">
                     <h3>Milestone Calendar</h3>
                     <h:panelGrid columnClasses="value">
                         <p:schedule id="schedule" resizable="false" draggable="false" widgetVar="myschedule" value="#{scheduleController.lazyEventModel}">
-                            <!--<p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />-->
                         </p:schedule>
                     </h:panelGrid>
                 </div>
-<!--                <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
-                    <h:panelGrid id="eventDetails" columns="2">
-                        <p:outputLabel for="title" value="Description :" />
-                        <h:outputText id="title" value="#{scheduleController.event.title}" />
-
-                        <p:outputLabel for="from" value="Due Date:" />
-                        <h:outputText id="from" value="#{scheduleController.event.startDate}" title="Due Date: ">
-                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
-                        </h:outputText>
-                    </h:panelGrid>
-                </p:dialog>    -->
             </h:form>
             <style type="text/css">
                 .value {

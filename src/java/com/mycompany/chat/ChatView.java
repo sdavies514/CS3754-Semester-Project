@@ -60,6 +60,8 @@ public class ChatView implements Serializable {
         create.setTimestamp(new Date());
         // Actually save the message to the db.
         getMessageFacade().create(create);
+        // Send message to /projectName/* so everyone in the room gets the
+        // message
         eventBus.publish("/" + projectViewManager.getSelected().getName() + "/*", getAccountManager().getSelected().getUsername() + ": " + globalMessage);
         globalMessage = null;
     }

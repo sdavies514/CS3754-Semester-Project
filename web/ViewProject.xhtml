@@ -97,6 +97,7 @@
                     </p:fieldset>
                 </h:form>
             </div>
+            <!--The actual socket that will be getting pushed to. -->
             <c:if test="#{accountManager.isLoggedIn()}">
                 <p:socket onMessage="handleMessage" channel="/#{projectViewManager.selected.name}/#{accountManager.selected.username}"/>
             </c:if>
