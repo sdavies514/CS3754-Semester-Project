@@ -17,7 +17,10 @@ import java.util.List;
 public class HeatmapTable {
 
     /**
-     * Contains all the rows represented in the table.
+     * Contains all the rows represented in the table. The string key in
+     * this collection must match the property field of the column that
+     * day is associated with, because this is how days are actually
+     * associated with the dynamic columns.
      */
     private final List<HashMap<String, HeatmapDay>> heatmapMaps = new ArrayList<>();
 
