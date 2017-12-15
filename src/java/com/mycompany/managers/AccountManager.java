@@ -419,8 +419,6 @@ public class AccountManager implements Serializable {
 
                 getUserFacade().create(newUser);
                 selected = newUser;
-                System.out.println(selected);
-
             } catch (EJBException e) {
                 username = "";
                 statusMessage = "Something went wrong while creating user's account! See: " + e.getMessage();

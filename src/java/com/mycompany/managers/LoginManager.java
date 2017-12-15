@@ -155,6 +155,7 @@ public class LoginManager implements Serializable {
      */
     public String loginUser() throws NoSuchAlgorithmException {
 
+        System.out.println(username);
         // Obtain the object reference of the User object from the entered username
         User user = getUserFacade().findByUsername(getUsername());
 
