@@ -8,18 +8,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Represents all the data required to construct a single heatmap datatable
+ * containing dynamic columns.
+ *
+ * @author CJ
+ */
 public class HeatmapTable {
 
+    /**
+     * Contains all the rows represented in the table.
+     */
     private final List<HashMap<String, HeatmapDay>> heatmapMaps = new ArrayList<>();
 
-    private final List<String> columns = new ArrayList<>();
+    /**
+     * The dynamic columns that should be displayed by the data table. Only
+     * columns in this list and data that references these columns will
+     * ultimately be shown in the datatable.
+     */
+    private final List<HeatmapColumn> columns = new ArrayList<>();
 
     public List<HashMap<String, HeatmapDay>> getHeatmapMaps() {
         return heatmapMaps;
     }
 
-    public List<String> getColumns() {
+    public List<HeatmapColumn> getColumns() {
         return columns;
     }
-
 }
