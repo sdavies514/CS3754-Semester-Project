@@ -101,6 +101,14 @@ public class ProjectFileController implements Serializable {
      */
     public ProjectFileController() {
     }
+    
+    @PostConstruct
+    public void init() {
+        root = new DefaultTreeNode(new ProjectFile());
+        for(ProjectFile pfile: getItems(projectViewManager.getSelected().getId())) {
+            new DefaultTreeNode(pfile, root);
+        }
+    }
 
     /*
     =========================
@@ -129,14 +137,6 @@ public class ProjectFileController implements Serializable {
     
     public void setSelectedNode(TreeNode select) {
         this.selectedNode = select;
-    }
-    
-    @PostConstruct
-    public void init() {
-        root = new DefaultTreeNode(new ProjectFile());
-        for(ProjectFile pfile: getItems(projectViewManager.getSelected().getId())) {
-            new DefaultTreeNode(pfile, root);
-        }
     }
     
     public TreeNode getRoot() {

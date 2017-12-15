@@ -10,14 +10,27 @@ Copyright © 2017 Kyle Dyess. All rights reserved.
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
+    <!-- Do not enter tags before the composition line since they are ignored by JSF -->
+
+    <!-- This page is constructed based on the siteTemplate -->
     <ui:composition template="/template/siteTemplate.xhtml">
 
         <ui:define name="title">
+            <!-- Set the page title; references the currently selected
+                    Project's name, found in projectViewManager -->
             <h:outputText value="#{projectViewManager.selected.name}'s Files"></h:outputText>
         </ui:define>
 
         <!-- Create the content for this page below -->
         <ui:define name="editableContent">
+            
+            <!--
+            You can place p:growl anywhere on your JSF page since the messages are displayed
+            as an overlay. The life attribute defines how long the message will be displayed
+            in milliseconds after which it will fade away. 5000 milliseconds = 5 seconds
+
+            All 'FacesMessage resultMsg' will be displayed here.
+            -->
             <p:growl id="growl" life="5000" />
             <h:form id="ProjectFilesForm">
                 <p:treeTable value="#{projectFileController.root}" var="projFile" 

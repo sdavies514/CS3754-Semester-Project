@@ -37,6 +37,8 @@ Copyright © 2017 Kyle Dyess. All rights reserved.
                     </div>
                     <br/>
 
+                    <!-- Note that the handleProjectFileUpload method of fileUploadManager is called,
+                            because we are trying to upload a project file, not a user file. -->
                     <p:fileUpload fileUploadListener="#{fileUploadManager.handleProjectFileUpload}" multiple="true"
                                   mode="advanced" sizeLimit="10000000" fileLimit="5"
                                   dragDropSupport="true" update="messages" />

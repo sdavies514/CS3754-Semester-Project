@@ -217,6 +217,10 @@ public class FileUploadManager implements Serializable {
 
     }
     
+    /*
+    Slightly modified version of handleFileUpload from above to replace UserFiles
+    with ProjectFiles.
+    */
     public void handleProjectFileUpload(FileUploadEvent event) throws IOException {
 
         try {
